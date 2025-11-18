@@ -5,7 +5,7 @@ class ConnectFourBoard:
     def __init__(self, initial_state: list[list[int]] = None):
         self.rows = 6
         self.cols = 7
-        self.winning_sequence = []
+        self.winning_sequence: list[Move] = []
 
         if initial_state:
             if len(initial_state) != self.rows or len(initial_state[0]) != self.cols:
@@ -53,7 +53,7 @@ class ConnectFourBoard:
                         for i in range(4)
                     ):
                         self.winning_sequence = [
-                            {"row": row + dr * i, "col": col + dc * i} for i in range(4)
+                            Move(row=row + dr * i, col=col + dc * i) for i in range(4)
                         ]
                         return True
 

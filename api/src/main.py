@@ -1,36 +1,52 @@
-from classes import (
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+
+from src.classes import (
     ConnectFourBoard,
     Game,
     HeuristicFactory,
     MinimaxAlphaBetaPruningSolver,
     Response,
 )
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)
 
 
-@app.route("/")
-def index():
-    return jsonify(ConnectFourBoard().state)
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-@app.route("/ping", methods=["GET"])
-def ping():
-    return jsonify({"message": "pong"})
+class BoardRequest(BaseModel):
+    heuristic: str
+    board: list[list[int]]
 
 
-@app.route("/get_move", methods=["POST"])
-def get_move():
-    data = request.get_json()
-    heuristic = data.get("heuristic")
-    currentBoard: list[list[int]] = data.get("board")
+@app.get("/")
+async def index():
+    return ConnectFourBoard().state
 
-    heuristic = HeuristicFactory.create_heuristic(heuristic=heuristic)
+
+@app.get("/ping")
+async def ping():
+    return {"message": "pong"}
+
+
+@app.post("/get_move")
+async def get_move(data: BoardRequest):
+    try:
+        heuristic = HeuristicFactory.create_heuristic(heuristic=data.heuristic)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
     solver = MinimaxAlphaBetaPruningSolver(heuristic=heuristic, depth=4)
-    board = ConnectFourBoard(initial_state=currentBoard)
+    board = ConnectFourBoard(initial_state=data.board)
 
     game = Game(
         board=board,
@@ -44,23 +60,23 @@ def get_move():
     response = Response(
         success=True,
         board=game.board.state,
-        state=game.state.name,
+        state=game.state,
         message=game.state.value,
         sequence=game.board.winning_sequence,
     )
 
-    return jsonify(response.__dict__)
+    return JSONResponse(content=response.__dict__)
 
 
-@app.route("/make_move", methods=["POST"])
-def make_move():
-    data = request.get_json()
-    heuristic = data.get("heuristic")
-    currentBoard: list[list[int]] = data.get("board")
+@app.post("/make_move")
+async def make_move(data: BoardRequest):
+    try:
+        heuristic = HeuristicFactory.create_heuristic(heuristic=data.heuristic)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-    heuristic = HeuristicFactory.create_heuristic(heuristic=heuristic)
     solver = MinimaxAlphaBetaPruningSolver(heuristic=heuristic, depth=4)
-    board = ConnectFourBoard(initial_state=currentBoard)
+    board = ConnectFourBoard(initial_state=data.board)
 
     game = Game(
         board=board,
@@ -77,7 +93,7 @@ def make_move():
     )
 
     if game.is_over():
-        return jsonify(response.__dict__)
+        return JSONResponse(content=response.__dict__)
 
     # Let the bot make its move
     game.play(piece=2)
@@ -87,4 +103,4 @@ def make_move():
     response.state = game.state.name
     response.sequence = game.board.winning_sequence
 
-    return jsonify(response.__dict__)
+    return JSONResponse(content=response.__dict__)
