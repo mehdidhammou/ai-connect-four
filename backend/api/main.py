@@ -1,15 +1,18 @@
 import os
+from contextlib import asynccontextmanager
 
+from api.schemas.api_response import ApiResponse
+from api.schemas.board_request import BoardRequest
+from api.schemas.model import Model
+from api.schemas.response import Response
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from api.schemas.api_response import ApiResponse
-from api.schemas.model import Model
-from api.schemas.response import Response
 from src.board import ConnectFourBoard
 from src.game import Game
+from src.game.game_state import GameState
 from src.heuristic import (
     CountPiecesHeuristic,
     CountPositionsHeuristic,
@@ -17,10 +20,25 @@ from src.heuristic import (
 )
 from src.model import MistralModelProvider, ModelProviderFactory
 from src.solver import MinimaxAlphaBetaPruningSolver
+from src.types.heuristic_enum import HeuristicEnum
 
-load_dotenv()
+from backend.api.schemas.move import Move
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_dotenv()
+    HeuristicFactory.register(HeuristicEnum.PIECES, CountPiecesHeuristic, id=1)
+    HeuristicFactory.register(HeuristicEnum.POSITIONS, CountPositionsHeuristic, id=2)
+    ModelProviderFactory.register(
+        "mistral",
+        MistralModelProvider,
+        api_key=os.environ["MISTRAL_API_KEY"],
+    )
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,21 +49,9 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-async def startup_event():
-    HeuristicFactory.register("pieces", CountPiecesHeuristic, id=1)
-    HeuristicFactory.register("positions", CountPositionsHeuristic, id=2)
-
-    ModelProviderFactory.register(
-        "mistral",
-        MistralModelProvider,
-        api_key=os.environ["MISTRAL_API_KEY"],
-    )
-
-
-class BoardRequest(BaseModel):
-    heuristic: str
-    board: list[list[int]]
+@app.get("/heuristics", response_model=ApiResponse[list[HeuristicEnum]])
+async def get_heuristics():
+    return ApiResponse(data=list(HeuristicEnum))
 
 
 @app.get("/")
@@ -55,13 +61,17 @@ async def index():
 
 @app.get("/models/{provider}", response_model=ApiResponse[list[Model]])
 async def get_provider_models(provider: str):
-    model_provider = ModelProviderFactory.create(provider)
+    try:
+        model_provider = ModelProviderFactory.create(provider)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
     return ApiResponse(data=model_provider.get_models())
 
 
-@app.get("/ping")
+@app.get("/ping", response_model=ApiResponse[dict])
 async def ping():
-    return {"message": "pong"}
+    return ApiResponse(data={"message": "pong"})
 
 
 @app.post("/get_move")

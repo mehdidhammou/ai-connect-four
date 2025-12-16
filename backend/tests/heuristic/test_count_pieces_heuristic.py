@@ -54,7 +54,7 @@ class TestCountPiecesHeuristic(unittest.TestCase):
             [0, 0, 0, 0, 0, 0, 0],
             [1, 1, 1, 1, 0, 0, 0],
         ]
-        self.assertEqual(heuristic.evaluate_board(board, 1), 15)
+        self.assertEqual(heuristic._evaluate_board(board, 1), 15)
 
         # Test when there are consecutive pieces in columns
         board.state = [
@@ -65,7 +65,7 @@ class TestCountPiecesHeuristic(unittest.TestCase):
             [1, 0, 0, 0, 1, 0, 0],
             [1, 0, 0, 0, 1, 0, 0],
         ]
-        self.assertEqual(heuristic.evaluate_board(board, 1), 30)
+        self.assertEqual(heuristic._evaluate_board(board, 1), 30)
 
         # Test when there are consecutive pieces in diagonals
         board.state = [
@@ -76,7 +76,7 @@ class TestCountPiecesHeuristic(unittest.TestCase):
             [0, 1, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0, 0],
         ]
-        self.assertEqual(heuristic.evaluate_board(board, 1), 15)
+        self.assertEqual(heuristic._evaluate_board(board, 1), 15)
 
     def test_evaluateWindow(self):
         heuristic = CountPiecesHeuristic(1)

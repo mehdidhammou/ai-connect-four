@@ -9,16 +9,14 @@ class Response:
         state: GameState,
         board: list[list[int]],
         sequence: list[Move] = None,
-        success: bool = True,
     ):
         self.message = message
         self.board = board
         self.state = state
         self.sequence = sequence
-        self.success = success
 
     def __repr__(self):
-        return f"Response(message={self.message}, board={self.board}, sequence={self.sequence}, success={self.success}, state={self.state})"
+        return f"Response(message={self.message}, board={self.board}, sequence={self.sequence}, state={self.state})"
 
     def __str__(self):
-        return f"Response(message={self.message}, board={self.board}, sequence={self.sequence}, success={self.success} state={self.state})"
+        return f"Response(message={self.message}, board={self.board}, sequence={self.sequence}, state={self.state})"

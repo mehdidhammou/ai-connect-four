@@ -1,5 +1,6 @@
 from .heuristic import Heuristic
 from src.board.connect_four_board import ConnectFourBoard
+from src.types.move import Move
 
 
 class CountPiecesHeuristic(Heuristic):
@@ -14,10 +15,14 @@ class CountPiecesHeuristic(Heuristic):
         if board.has_won(piece=2):
             return -999_999
 
-        return CountPiecesHeuristic.evaluate_board(board, piece)
+        return CountPiecesHeuristic._evaluate_board(board, piece)
 
     @staticmethod
-    def evaluate_board(board: ConnectFourBoard, piece):
+    def first_play() -> Move:
+        return {"col": 0, "row": 0}
+
+    @staticmethod
+    def _evaluate_board(board: ConnectFourBoard, piece):
         score = 0
         # Evaluate based on consecutive pieces in rows
         for row in range(board.rows):
