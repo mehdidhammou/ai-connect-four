@@ -1,5 +1,0 @@
-from .game.test_game import TestGame
-from .board.test_connect_four_board import TestConnectFourBoard
-from .heuristic.test_count_pieces_heuristic import TestCountPiecesHeuristic
-from .heuristic.test_count_positions_heuristic import TestCountPositionsHeuristic
-from .solver.test_minimax_alpha_beta_pruning_solver import TestMinimaxAlphaBetaPruningSolver
