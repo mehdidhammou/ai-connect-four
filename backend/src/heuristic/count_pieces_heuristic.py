@@ -1,14 +1,13 @@
-from .heuristic import Heuristic
 from src.board.connect_four_board import ConnectFourBoard
 from src.types.move import Move
+from src.types.piece import Piece
+
+from .heuristic import Heuristic
 
 
 class CountPiecesHeuristic(Heuristic):
-    def __init__(self, id: int) -> None:
-        super().__init__(id=id)
-
     @staticmethod
-    def evaluate(board: ConnectFourBoard, piece) -> int:
+    def evaluate(board: ConnectFourBoard, piece: Piece) -> int:
         if board.has_won(piece=piece):
             return 999_999
 

@@ -1,7 +1,7 @@
 # abstract model provider class
 from abc import ABC, abstractmethod
 
-from backend.src.types.move import Move
+from src.types.move import Move
 
 from .model import Model
 

@@ -8,7 +8,7 @@ from src.heuristic import (
 
 class TestCountPositionsHeuristic(unittest.TestCase):
     def setUp(self):
-        self.heuristic = CountPositionsHeuristic(id=1)
+        self.heuristic = CountPositionsHeuristic()
         self.board = ConnectFourBoard()
 
     def test_evaluate_center_control(self):

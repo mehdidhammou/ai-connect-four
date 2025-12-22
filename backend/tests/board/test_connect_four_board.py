@@ -1,4 +1,5 @@
 from unittest import TestCase
+from src.types.move import Move
 from src.board.connect_four_board import ConnectFourBoard
 from random import random
 
@@ -25,13 +26,13 @@ class TestConnectFourBoard(TestCase):
     def test_get_possible_moves(self):
         board = ConnectFourBoard()
         expected_moves = [
-            {"col": 0, "row": 5},
-            {"col": 1, "row": 5},
-            {"col": 2, "row": 5},
-            {"col": 3, "row": 5},
-            {"col": 4, "row": 5},
-            {"col": 5, "row": 5},
-            {"col": 6, "row": 5},
+            Move(col=0, row=5),
+            Move(col=1, row=5),
+            Move(col=2, row=5),
+            Move(col=3, row=5),
+            Move(col=4, row=5),
+            Move(col=5, row=5),
+            Move(col=6, row=5),
         ]
         self.assertEqual(board.get_possible_moves(), expected_moves)
 
@@ -40,13 +41,13 @@ class TestConnectFourBoard(TestCase):
         initial_state.append([1, 2, 1, 2, 1, 2, 1])
         board = ConnectFourBoard(initial_state)
         expected_moves = [
-            {"col": 0, "row": 4},
-            {"col": 1, "row": 4},
-            {"col": 2, "row": 4},
-            {"col": 3, "row": 4},
-            {"col": 4, "row": 4},
-            {"col": 5, "row": 4},
-            {"col": 6, "row": 4},
+            Move(col=0, row=4),
+            Move(col=1, row=4),
+            Move(col=2, row=4),
+            Move(col=3, row=4),
+            Move(col=4, row=4),
+            Move(col=5, row=4),
+            Move(col=6, row=4),
         ]
         self.assertEqual(board.get_possible_moves(), expected_moves)
 
@@ -65,10 +66,10 @@ class TestConnectFourBoard(TestCase):
         self.assertEqual(
             board.winning_sequence,
             [
-                {"row": 5, "col": 0},
-                {"row": 5, "col": 1},
-                {"row": 5, "col": 2},
-                {"row": 5, "col": 3},
+                Move(row=5, col=0),
+                Move(row=5, col=1),
+                Move(row=5, col=2),
+                Move(row=5, col=3),
             ],
         )
 
@@ -87,10 +88,10 @@ class TestConnectFourBoard(TestCase):
         self.assertEqual(
             board.winning_sequence,
             [
-                {"row": 2, "col": 0},
-                {"row": 3, "col": 0},
-                {"row": 4, "col": 0},
-                {"row": 5, "col": 0},
+                Move(row=2, col=0),
+                Move(row=3, col=0),
+                Move(row=4, col=0),
+                Move(row=5, col=0),
             ],
         )
 
@@ -106,13 +107,14 @@ class TestConnectFourBoard(TestCase):
         ]
         board = ConnectFourBoard(initial_state)
         self.assertTrue(board.has_won(1))
+        self.assertIsNotNone(board.winning_sequence)
         self.assertCountEqual(
             board.winning_sequence,
             [
-                {"row": 5, "col": 0},
-                {"row": 4, "col": 1},
-                {"row": 3, "col": 2},
-                {"row": 2, "col": 3},
+                Move(row=5, col=0),
+                Move(row=4, col=1),
+                Move(row=3, col=2),
+                Move(row=2, col=3),
             ],
         )
 
@@ -128,4 +130,4 @@ class TestConnectFourBoard(TestCase):
         ]
         board = ConnectFourBoard(initial_state)
         self.assertFalse(board.has_won(1))
-        self.assertEqual(board.winning_sequence, [])
+        self.assertEqual(board.winning_sequence, None)

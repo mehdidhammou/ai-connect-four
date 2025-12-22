@@ -6,17 +6,13 @@ class HeuristicFactory:
     _providers = {}
 
     @classmethod
-    def register(cls, name: HeuristicEnum, heuristic_cls, *args, **kwargs):
-        cls._providers[name] = {"cls": heuristic_cls, "args": args, "kwargs": kwargs}
+    def register(cls, name: HeuristicEnum, heuristic_cls):
+        cls._providers[name] = heuristic_cls
 
     @classmethod
     def create(cls, name: HeuristicEnum) -> Heuristic:
-        entry = cls._providers.get(name)
+        heuristic_cls = cls._providers.get(name)
 
-        if not entry:
+        if not heuristic_cls:
             raise ValueError(f"Unknown heuristic: {name}")
-
-        heuristic_cls = entry["cls"]
-        args = entry["args"]
-        kwargs = entry["kwargs"]
-        return heuristic_cls(*args, **kwargs)
+        return heuristic_cls()

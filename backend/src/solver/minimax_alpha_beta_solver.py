@@ -33,13 +33,9 @@ class MinimaxAlphaBetaPruningSolver(Solver):
         max_player,
         piece: Piece,
     ) -> tuple[float, Move | None]:
-        if board.has_won(piece=piece):
-            return 999_999, None
-        if board.has_won(piece=3 - piece):
-            return -999_999, None
-
         if depth == 0 or not board.get_possible_moves():
-            return self.heuristic.evaluate(board=board, piece=piece), None
+            sign = 1 if max_player else -1
+            return sign * self.heuristic.evaluate(board=board, piece=piece), None
 
         possible_moves = board.get_possible_moves()
         if max_player:
@@ -51,13 +47,16 @@ class MinimaxAlphaBetaPruningSolver(Solver):
 
                 new_board.make_move(move=move, piece=piece)
 
+                if new_board.has_won(piece=piece):
+                    return 999_999, move
+
                 eval, _ = self.minimax_alpha_beta_pruning(
                     board=new_board,
                     depth=depth - 1,
                     alpha=alpha,
                     beta=beta,
                     max_player=False,
-                    piece=piece,
+                    piece=3 - piece,
                 )
 
                 if eval > max_eval:
@@ -77,7 +76,10 @@ class MinimaxAlphaBetaPruningSolver(Solver):
             for move in possible_moves:
                 new_board = ConnectFourBoard(initial_state=board.state)
 
-                new_board.make_move(move=move, piece=3 - piece)
+                new_board.make_move(move=move, piece=piece)
+
+                if new_board.has_won(piece=piece):
+                    return -999_999, move
 
                 eval, _ = self.minimax_alpha_beta_pruning(
                     board=new_board,
@@ -85,7 +87,7 @@ class MinimaxAlphaBetaPruningSolver(Solver):
                     alpha=alpha,
                     beta=beta,
                     max_player=True,
-                    piece=piece,
+                    piece=3 - piece,
                 )
 
                 if eval < min_eval:

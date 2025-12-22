@@ -1,9 +1,6 @@
-import os
-
 from mistralai import Mistral
 from mistralai.models import UserMessage
 
-from backend.src.types import move
 from src.board.connect_four_board import ConnectFourBoard
 from src.types.move import Move
 from src.types.piece import Piece

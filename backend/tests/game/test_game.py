@@ -1,13 +1,14 @@
 from unittest import TestCase
 
-from api.schemas.move import Move
+from src.types.piece import Piece
 from src.board.connect_four_board import ConnectFourBoard
 from src.game import Game, GameState
 from src.solver import Solver
+from src.types.move import Move
 
 
 class MockSolver(Solver):
-    def solve(self, board: ConnectFourBoard) -> Move:
+    def solve(self, board: ConnectFourBoard, piece: Piece) -> Move:
         possible_moves = board.get_possible_moves()
         return possible_moves[0]  # Always return the first column as the best move
 
@@ -19,8 +20,8 @@ class TestGame(TestCase):
         self.game = Game(self.board, self.solver)
 
     def test_play(self):
-        self.game.play(1)
-        self.assertEqual(self.board.state[5][0], 1)
+        move = self.game.get_solver_move(piece=1)
+        self.assertEqual(move, Move(col=0, row=5))
 
     def test_sync_state_win(self):
         self.board.state = [

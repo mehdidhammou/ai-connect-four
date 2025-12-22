@@ -32,8 +32,8 @@ from src.utils import get_solver
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_dotenv()
-    HeuristicFactory.register(HeuristicEnum.PIECES, CountPiecesHeuristic, id=1)
-    HeuristicFactory.register(HeuristicEnum.POSITIONS, CountPositionsHeuristic, id=2)
+    HeuristicFactory.register(HeuristicEnum.PIECES, CountPiecesHeuristic)
+    HeuristicFactory.register(HeuristicEnum.POSITIONS, CountPositionsHeuristic)
     ModelProviderFactory.register(
         ModelProviderEnum.MISTRAL,
         MistralModelProvider,

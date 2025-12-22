@@ -6,7 +6,7 @@ from src.board import ConnectFourBoard
 class TestCountPiecesHeuristic(unittest.TestCase):
     def test_evaluate(self):
         board = ConnectFourBoard()
-        heuristic = CountPiecesHeuristic(1)
+        heuristic = CountPiecesHeuristic()
 
         # Test when player 1 has won
         board.state = [
@@ -28,7 +28,7 @@ class TestCountPiecesHeuristic(unittest.TestCase):
             [0, 0, 0, 0, 0, 0, 0],
             [2, 2, 2, 2, 0, 0, 0],
         ]
-        self.assertEqual(heuristic.evaluate(board, 1), -999_999)
+        self.assertEqual(-heuristic.evaluate(board, 2), -999_999)
 
         # Test when there is no win
         board.state = [
@@ -43,7 +43,7 @@ class TestCountPiecesHeuristic(unittest.TestCase):
 
     def test_evaluate_board(self):
         board = ConnectFourBoard()
-        heuristic = CountPiecesHeuristic(1)
+        heuristic = CountPiecesHeuristic()
 
         # Test when there are consecutive pieces in rows
         board.state = [
@@ -79,7 +79,7 @@ class TestCountPiecesHeuristic(unittest.TestCase):
         self.assertEqual(heuristic._evaluate_board(board, 1), 15)
 
     def test_evaluateWindow(self):
-        heuristic = CountPiecesHeuristic(1)
+        heuristic = CountPiecesHeuristic()
 
         # Test when there are 3 consecutive pieces and 1 empty space
         window = [1, 1, 1, 0]

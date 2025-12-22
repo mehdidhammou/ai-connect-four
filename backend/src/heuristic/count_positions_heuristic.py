@@ -6,9 +6,6 @@ from .heuristic import Heuristic
 
 
 class CountPositionsHeuristic(Heuristic):
-    def __init__(self, id: int) -> None:
-        super().__init__(id=id)
-
     @staticmethod
     def evaluate(board: ConnectFourBoard, piece: Piece) -> float:
         if board.has_won(piece=piece):
