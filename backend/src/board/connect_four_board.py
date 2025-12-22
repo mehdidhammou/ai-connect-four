@@ -1,8 +1,9 @@
 from src.types.move import Move
+from src.types.piece import Piece
 
 
 class ConnectFourBoard:
-    def __init__(self, initial_state: list[list[int]] | None = None):
+    def __init__(self, initial_state: list[list[Piece]] | None = None):
         self.rows = 6
         self.cols = 7
         self.winning_sequence: list[Move] | None = None
@@ -16,22 +17,22 @@ class ConnectFourBoard:
             else:
                 self.state = [[_ for _ in row] for row in initial_state]
 
-    def make_move(self, move: Move, piece: int) -> None:
+    def make_move(self, move: Move, piece: Piece) -> None:
         if move not in self.get_possible_moves():
             raise ValueError("Invalid move")
 
-        self.state[move["row"]][move["col"]] = piece
+        self.state[move.row][move.col] = piece
 
     def get_possible_moves(self) -> list[Move]:
         moves: list[Move] = []
         for col in range(self.cols):
             for row in range(self.rows - 1, -1, -1):
                 if self.state[row][col] == 0:
-                    moves.append({"col": col, "row": row})
+                    moves.append(Move(col=col, row=row))
                     break
         return moves
 
-    def has_won(self, piece: int) -> bool:
+    def has_won(self, piece: Piece) -> bool:
         directions = [
             (0, 1),
             (1, 0),

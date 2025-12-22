@@ -1,6 +1,8 @@
 from typing import TypedDict
 
+from pydantic import BaseModel
 
-class Move(TypedDict):
+
+class Move(BaseModel):
     col: int
     row: int

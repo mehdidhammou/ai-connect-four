@@ -1,5 +1,6 @@
-from .move import Move
+from typing import Type
 from src.game import GameState
+from src.types.move import Move
 
 
 class Response:
@@ -8,7 +9,7 @@ class Response:
         message: str,
         state: GameState,
         board: list[list[int]],
-        sequence: list[Move] = None,
+        sequence: list[Move] | None,
     ):
         self.message = message
         self.board = board

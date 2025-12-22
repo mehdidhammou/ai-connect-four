@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from src.types.piece import Piece
 from src.types.move import Move
 from src.board.connect_four_board import ConnectFourBoard
 
@@ -8,7 +9,7 @@ class Heuristic(ABC):
         self.id = id
 
     @abstractmethod
-    def evaluate(self, board: ConnectFourBoard, piece: int) -> float:
+    def evaluate(self, board: ConnectFourBoard, piece: Piece) -> float:
         pass
 
     @abstractmethod

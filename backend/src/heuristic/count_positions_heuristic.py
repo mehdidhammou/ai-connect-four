@@ -1,5 +1,6 @@
 from src.board.connect_four_board import ConnectFourBoard
 from src.types.move import Move
+from src.types.piece import Piece
 
 from .heuristic import Heuristic
 
@@ -9,21 +10,14 @@ class CountPositionsHeuristic(Heuristic):
         super().__init__(id=id)
 
     @staticmethod
-    def evaluate(board: ConnectFourBoard, piece: int) -> float:
-        if board.has_won(1):
-            return 100_000
-
-        if board.has_won(2):
-            return -100_000
+    def evaluate(board: ConnectFourBoard, piece: Piece) -> float:
+        if board.has_won(piece=piece):
+            return 999_999
 
         score = 0
         score += 4 * CountPositionsHeuristic._evaluate_center_control(board, piece)
-        score += 1 * CountPositionsHeuristic._evaluate_corner_control(
-            board, piece
-        )  # Give corners higher weight
-        score += 0.5 * CountPositionsHeuristic._evaluate_side_control(
-            board, piece
-        )  # Give sides lower weight
+        score += 1 * CountPositionsHeuristic._evaluate_corner_control(board, piece)
+        score += 0.5 * CountPositionsHeuristic._evaluate_side_control(board, piece)
         score += CountPositionsHeuristic._check_double_sided_win(board, piece)
         score += 20 * CountPositionsHeuristic._check_blocking_move(board, piece)
         score += 1000 * CountPositionsHeuristic._check_winning_move(board, piece)
@@ -32,10 +26,10 @@ class CountPositionsHeuristic(Heuristic):
 
     @staticmethod
     def first_play() -> Move:
-        return {"col": 3, "row": 0}
+        return Move(col=3, row=0)
 
     @staticmethod
-    def _evaluate_center_control(board: ConnectFourBoard, piece: int):
+    def _evaluate_center_control(board: ConnectFourBoard, piece: Piece):
         center_col = board.cols // 2
         center_count = 0
 
@@ -46,7 +40,7 @@ class CountPositionsHeuristic(Heuristic):
         return center_count
 
     @staticmethod
-    def _evaluate_corner_control(board: ConnectFourBoard, piece: int):
+    def _evaluate_corner_control(board: ConnectFourBoard, piece: Piece):
         corner_count = 0
 
         if board.state[0][0] == piece:
@@ -61,7 +55,7 @@ class CountPositionsHeuristic(Heuristic):
         return corner_count
 
     @staticmethod
-    def _evaluate_side_control(board: ConnectFourBoard, piece: int):
+    def _evaluate_side_control(board: ConnectFourBoard, piece: Piece):
         side_count = 0
 
         for row in range(board.rows):
@@ -79,7 +73,7 @@ class CountPositionsHeuristic(Heuristic):
         return side_count
 
     @staticmethod
-    def _check_double_sided_win(board: ConnectFourBoard, piece: int):
+    def _check_double_sided_win(board: ConnectFourBoard, piece: Piece):
         opponent_piece = 3 - piece
 
         # Check for potential double-sided wins in rows
@@ -118,7 +112,7 @@ class CountPositionsHeuristic(Heuristic):
         return 0
 
     @staticmethod
-    def _check_blocking_move(board: ConnectFourBoard, piece: int):
+    def _check_blocking_move(board: ConnectFourBoard, piece: Piece):
         # Check for potential blocking moves in rows
         for row in range(board.rows):
             for col in range(board.cols - 3):
@@ -150,7 +144,7 @@ class CountPositionsHeuristic(Heuristic):
         return 0
 
     @staticmethod
-    def _check_winning_move(board: ConnectFourBoard, piece: int):
+    def _check_winning_move(board: ConnectFourBoard, piece: Piece):
         # Check for potential winning moves in rows
         for row in range(board.rows):
             for col in range(board.cols - 3):

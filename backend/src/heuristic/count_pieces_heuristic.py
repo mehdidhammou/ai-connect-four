@@ -9,17 +9,14 @@ class CountPiecesHeuristic(Heuristic):
 
     @staticmethod
     def evaluate(board: ConnectFourBoard, piece) -> int:
-        if board.has_won(piece=1):
+        if board.has_won(piece=piece):
             return 999_999
-
-        if board.has_won(piece=2):
-            return -999_999
 
         return CountPiecesHeuristic._evaluate_board(board, piece)
 
     @staticmethod
     def first_play() -> Move:
-        return {"col": 0, "row": 0}
+        return Move(col=0, row=0)
 
     @staticmethod
     def _evaluate_board(board: ConnectFourBoard, piece):

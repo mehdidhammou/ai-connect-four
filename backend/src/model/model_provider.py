@@ -1,6 +1,8 @@
 # abstract model provider class
 from abc import ABC, abstractmethod
 
+from backend.src.types.move import Move
+
 from .model import Model
 
 
@@ -10,4 +12,8 @@ class ModelProvider(ABC):
 
     @abstractmethod
     def get_models(self) -> list[Model]:
+        pass
+
+    @abstractmethod
+    def get_move(self, board, piece, model_name: str) -> Move | None:
         pass
