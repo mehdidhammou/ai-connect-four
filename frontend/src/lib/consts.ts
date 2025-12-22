@@ -3,26 +3,26 @@ import { GameMode } from "./types";
 
 export const PIECE = {
     Empty: 0,
-    Player: 1,
-    Cpu: 2,
+    PlayerOne: 1,
+    PlayerTwo: 2,
 } as const;
 
 export const gameModes: GameMode[] = [
     {
-        "name": "Human vs CPU (Counting pieces)",
-        "link": "/vs-cpu/pieces",
-        "Icon1": User,
-        "Icon2": User,
-    },
-    {
-        "name": "Human vs CPU (Counting positions)",
-        "link": "/vs-cpu/positions",
+        "name": "Human vs Heuristic (Counting pieces)",
+        "link": "/vs-heuristic/pieces",
         "Icon1": User,
         "Icon2": Cpu,
     },
     {
-        "name": "CPU vs CPU",
-        "link": "/cpu-vs-cpu",
+        "name": "Human vs Heuristic (Counting positions)",
+        "link": "/vs-heuristic/positions",
+        "Icon1": User,
+        "Icon2": Cpu,
+    },
+    {
+        "name": "Heuristic vs Heuristic",
+        "link": "/heuristic-vs-heuristic",
         "Icon1": Cpu,
         "Icon2": Cpu,
     }

@@ -11,7 +11,7 @@ import { AlertCircle, CheckCircle } from "lucide-react";
 import { Button } from "../ui/button";
 
 const GameOverDialog = () => {
-  const gameState = useGameStore((state) => state.gameState);
+  const gameState = useGameStore((state) => state.state);
   const message = useGameStore((state) => state.message);
   const reset = useGameStore((state) => state.reset);
 

@@ -11,9 +11,11 @@ import { useState } from "react";
 const MainMenu = () => {
   const [modelSearch, setModelSearch] = useState<string>("");
 
+  const currentModel = "mistral";
+
   const { data } = useQuery({
     queryKey: ["models"],
-    queryFn: () => getModels("mistral"),
+    queryFn: () => getModels(currentModel),
   });
 
   const filteredModels = data?.data.filter((model) =>
@@ -61,7 +63,7 @@ const MainMenu = () => {
         <CardContent className="grid gap-4 p-6 md:grid-cols-3">
           {filteredModels?.map((model, idx) => (
             <Button key={idx} asChild className="h-32" variant={"outline"}>
-              <Link to={""}>
+              <Link to={`/vs-llm/${currentModel}/${model.name}`}>
                 <p>{model.name}</p>
               </Link>
             </Button>

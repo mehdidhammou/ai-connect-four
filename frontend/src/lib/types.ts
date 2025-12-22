@@ -14,9 +14,11 @@ export type ObjectValues<T> = T[keyof T];
 
 export type Piece = ObjectValues<typeof PIECE>;
 
+export type Board = Piece[][];
+
 export type Heuristic = "pieces" | "positions";
 
-export type Player = "Human" | "CPU" | Heuristic | undefined;
+export type Player = "Human" | "Heuristic" | "LLM" | undefined;
 
 export type Move = {
     row: number,
@@ -25,7 +27,7 @@ export type Move = {
 
 export type GameResponse = {
     success: boolean,
-    board: Piece[][],
+    board: Board,
     message: string,
     state: GameState,
     sequence: Move[],

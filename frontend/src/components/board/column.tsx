@@ -12,7 +12,7 @@ type ColumnProps = {
 
 const Column = ({ column, colIdx }: ColumnProps) => {
   const { makeMove, sync, sequence, isSyncing } = useBoardStore();
-  const { auto, gameState } = useGameStore();
+  const { auto, state: gameState } = useGameStore();
   const { heuristic } = useParams<{ heuristic: Heuristic }>();
   const disabled =
     isSyncing || column[0] !== PIECE.Empty || auto || gameState !== "CONTINUE";
@@ -36,9 +36,11 @@ const Column = ({ column, colIdx }: ColumnProps) => {
         <Cell
           key={index}
           value={val}
-          highlight={sequence.some(
-            (move) => move.col === colIdx && move.row === index
-          )}
+          highlight={
+            sequence?.some(
+              (move) => move.col === colIdx && move.row === index
+            ) || false
+          }
         />
       ))}
     </button>

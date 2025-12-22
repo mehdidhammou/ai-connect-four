@@ -12,7 +12,7 @@ import { Heuristic } from "@/lib/types";
 
 const AutoGame = () => {
   const setAuto = useGameStore((state) => state.setAuto);
-  const gameState = useGameStore((state) => state.gameState);
+  const gameState = useGameStore((state) => state.state);
   const sync = useBoardStore((state) => state.sync);
   const currentPlayer = useGameStore((state) => state.currentPlayer);
   const { heuristic } = useParams();

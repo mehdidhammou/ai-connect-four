@@ -1,13 +1,14 @@
-import { GameState, Player } from "@/lib/types";
+import { Board, GameState, Move, Player } from "@/lib/types";
 import { create } from "zustand";
 import { useBoardStore } from "./board-store";
 
 
 type GameStateStore = {
-    currentPlayer: Player,
+    currentPlayer: 1 | 2 | undefined,
+    board: Board,
     state: GameState,
-    message: string,
-    auto: boolean,
+    winningSequence: Move[] | null,
+    auto: boolean, 
 }
 
 type GameActionsStore = {

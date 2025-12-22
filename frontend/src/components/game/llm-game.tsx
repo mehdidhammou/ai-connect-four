@@ -5,13 +5,13 @@ import StarterSelector from "./starter-selector";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Separator } from "../ui/separator";
 
-const Game = () => {
+const LLMGame = () => {
   return (
     <>
-      <StarterSelector players={["Human", "CPU"]} />
+      <StarterSelector players={["Human", "LLM"]} />
       <GameOverDialog />
       <div className="w-full row-span-3">
-        <Card >
+        <Card>
           <CardHeader>
             <GameHeader />
           </CardHeader>
@@ -25,4 +25,4 @@ const Game = () => {
   );
 };
 
-export default Game;
+export default LLMGame;

@@ -1,4 +1,4 @@
-import { GameResponse, Heuristic, Piece, Move } from '@/lib/types'
+import { GameResponse, Heuristic, Piece, Move, Board } from '@/lib/types'
 import { createEmptyBoard, transpose } from '@/lib/utils'
 import { create } from 'zustand'
 import { PIECE } from '../lib/consts'
@@ -6,8 +6,8 @@ import { useGameStore } from './game-store'
 
 
 type boardState = {
-    board: Piece[][],
-    sequence: Move[],
+    board: Board,
+    sequence: Move[] | undefined,
     isSyncing: boolean,
 }
 
@@ -60,7 +60,7 @@ export const useBoardStore = create<boardState & boardActions>()((set, get) => (
             set({ board: data.board, sequence: data.sequence });
             if (data.state !== "CONTINUE") {
                 await new Promise((resolve) => setTimeout(resolve, 500));
-                useGameStore.setState({ gameState: data.state, message: data.message });
+                useGameStore.setState({ state: data.state, message: data.message });
             }
             useGameStore.getState().toggleTurn();
 
