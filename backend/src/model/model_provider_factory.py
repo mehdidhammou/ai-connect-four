@@ -1,4 +1,4 @@
-from src.types.model_provider_enum import ModelProviderEnum
+from src.types.model_provider_name import ModelProviderName
 
 from .model_provider import ModelProvider
 
@@ -7,11 +7,11 @@ class ModelProviderFactory:
     _providers = {}
 
     @classmethod
-    def register(cls, name: ModelProviderEnum, provider_cls, *args, **kwargs):
+    def register(cls, name: ModelProviderName, provider_cls, *args, **kwargs):
         cls._providers[name] = {"cls": provider_cls, "args": args, "kwargs": kwargs}
 
     @classmethod
-    def create(cls, name: ModelProviderEnum) -> ModelProvider:
+    def create(cls, name: ModelProviderName) -> ModelProvider:
         entry = cls._providers.get(name)
 
         if not entry:

@@ -1,18 +1,20 @@
-from pydantic import BaseModel
-from typing_extensions import Literal
-from .heuristic_enum import HeuristicEnum
-from .model_provider_enum import ModelProviderEnum
+from pydantic import BaseModel, Field
+from typing_extensions import Annotated, Literal, Union
+from src.types.heuristic_name import HeuristicName
+
+from .model_provider_name import ModelProviderName
 
 
-class MinimaxSolver(BaseModel):
-    type: Literal["minimax_alpha_beta"]
-    name: HeuristicEnum
+class HeuristicSolverType(BaseModel):
+    type: Literal["heuristic"]
+    name: HeuristicName
 
 
-class LLMSolver(BaseModel):
-    type: Literal["llm"]
-    provider: ModelProviderEnum
+class LLMSolverType(BaseModel):
+    type: ModelProviderName
     name: str
 
 
-SolverType = MinimaxSolver | LLMSolver
+SolverType = Annotated[
+    Union[HeuristicSolverType, LLMSolverType], Field(discriminator="type")
+]

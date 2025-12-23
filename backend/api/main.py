@@ -10,7 +10,7 @@ from api.schemas.move_request import MoveRequest
 from api.schemas.move_response import MoveResponse
 from api.schemas.response import Response
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from src.board import ConnectFourBoard
@@ -22,19 +22,19 @@ from src.heuristic import (
 )
 from src.model import MistralModelProvider, ModelProviderFactory
 from src.solver import MinimaxAlphaBetaPruningSolver
-from src.types.heuristic_enum import HeuristicEnum
-from src.types.model_provider_enum import ModelProviderEnum
-from src.types.solver_type import LLMSolver, MinimaxSolver, SolverType
-from src.utils import get_solver
+from src.types.heuristic_name import HeuristicName
+from src.types.model_provider_name import ModelProviderName
+from src.types.solver_type import SolverType, HeuristicSolverType, LLMSolverType
+from src.utils import get_solver, validate_solver_type
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_dotenv()
-    HeuristicFactory.register(HeuristicEnum.PIECES, CountPiecesHeuristic)
-    HeuristicFactory.register(HeuristicEnum.POSITIONS, CountPositionsHeuristic)
+    HeuristicFactory.register("pieces", CountPiecesHeuristic)
+    HeuristicFactory.register("positions", CountPositionsHeuristic)
     ModelProviderFactory.register(
-        ModelProviderEnum.MISTRAL,
+        "mistral",
         MistralModelProvider,
         api_key=os.environ["MISTRAL_API_KEY"],
     )
@@ -52,11 +52,6 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def index():
-    return ConnectFourBoard().state
-
-
 @app.get("/ping", response_model=ApiResponse[dict])
 async def ping():
     return ApiResponse(data={"message": "pong"})
@@ -66,31 +61,17 @@ async def ping():
 async def get_solvers():
     solvers = []
 
-    for solver_cls in get_args(SolverType):
-        type_literals = get_args(solver_cls.model_fields["type"].annotation)
+    # Add heuristic solvers
+    for name in get_args(HeuristicName):
+        solvers.append(HeuristicSolverType(type="heuristic", name=name))
 
-        if issubclass(solver_cls, MinimaxSolver):
-            for type_literal in type_literals:
-                for name in HeuristicEnum:  # iterate over enum members
-                    solvers.append(MinimaxSolver(type=type_literal, name=name))
-        elif issubclass(solver_cls, LLMSolver):
-            for type_literal in type_literals:
-                for provider in ModelProviderEnum:
-                    solvers.append(
-                        LLMSolver(type=type_literal, provider=provider, name="default")
-                    )
+    # Add LLM solvers
+    for provider in get_args(ModelProviderName):
+        provider_instance = ModelProviderFactory.create(provider)
+        for model in provider_instance.get_models():
+            solvers.append(LLMSolverType(type=provider, name=model.name))
 
     return ApiResponse(data=solvers)
-
-
-@app.get("/models/{provider}", response_model=ApiResponse[list[Model]])
-async def get_provider_models(provider: ModelProviderEnum):
-    try:
-        model_provider = ModelProviderFactory.create(provider)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    return ApiResponse(data=model_provider.get_models())
 
 
 @app.post("/get_move")
@@ -159,11 +140,13 @@ async def make_move(data: BoardRequest):
     return JSONResponse(content=response.__dict__)
 
 
-# TODO: it's possible to merge /move and /auto_move endpoints into one by making combining player and solver types
-@app.post("/move", response_model=ApiResponse[MoveResponse])
-async def move(data: MoveRequest):
+@app.post("/move/{solver}/{name}", response_model=ApiResponse[MoveResponse])
+async def move(
+    data: MoveRequest,
+    solver_type: SolverType = Depends(validate_solver_type),
+):
     try:
-        solver = get_solver(data.solver)
+        solver = get_solver(solver_type)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

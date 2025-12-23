@@ -1,7 +1,8 @@
-from unittest import TestCase
-from src.types.move import Move
-from src.board.connect_four_board import ConnectFourBoard
 from random import random
+from unittest import TestCase
+
+from src.board.connect_four_board import ConnectFourBoard
+from src.types.move import Move
 
 
 class TestConnectFourBoard(TestCase):
