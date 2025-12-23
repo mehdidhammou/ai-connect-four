@@ -1,14 +1,14 @@
 from unittest import TestCase
 
-from src.types.piece import Piece
 from src.board.connect_four_board import ConnectFourBoard
-from src.game import Game, GameState
 from src.solver import Solver
 from src.types.move import Move
+from src.types.piece_enum import PieceEnum
+from src.game.game import Game
 
 
 class MockSolver(Solver):
-    def solve(self, board: ConnectFourBoard, piece: Piece) -> Move:
+    def solve(self, board: ConnectFourBoard, piece: PieceEnum) -> Move:
         possible_moves = board.get_possible_moves()
         return possible_moves[0]  # Always return the first column as the best move
 
@@ -20,7 +20,7 @@ class TestGame(TestCase):
         self.game = Game(self.board, self.solver)
 
     def test_play(self):
-        move = self.game.get_solver_move(piece=1)
+        move = self.game.get_solver_move(piece=PieceEnum.CPU)
         self.assertEqual(move, Move(col=0, row=5))
 
     def test_sync_state_win(self):
@@ -33,7 +33,7 @@ class TestGame(TestCase):
             [0, 0, 0, 0, 0, 0, 0],
         ]
         self.game.sync_state()
-        self.assertEqual(self.game.state, GameState.WIN)
+        self.assertEqual(self.game.state, "WIN")
 
     def test_sync_state_lose(self):
         self.board.state = [
@@ -45,7 +45,7 @@ class TestGame(TestCase):
             [0, 0, 0, 0, 0, 0, 0],
         ]
         self.game.sync_state()
-        self.assertEqual(self.game.state, GameState.LOSE)
+        self.assertEqual(self.game.state, "LOSE")
 
     def test_sync_state_tie(self):
         self.board.state = [
@@ -57,4 +57,4 @@ class TestGame(TestCase):
             [2, 1, 2, 2, 2, 1, 2],
         ]
         self.game.sync_state()
-        self.assertEqual(self.game.state, GameState.TIE)
+        self.assertEqual(self.game.state, "TIE")

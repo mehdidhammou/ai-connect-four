@@ -3,7 +3,7 @@ from math import inf
 from src.board.connect_four_board import ConnectFourBoard
 from src.heuristic import Heuristic
 from src.types.move import Move
-from src.types.piece import Piece
+from src.types.piece_enum import PieceEnum
 
 from .solver import Solver
 
@@ -13,7 +13,10 @@ class MinimaxAlphaBetaPruningSolver(Solver):
         self.depth = depth
         self.heuristic = heuristic
 
-    def solve(self, board: ConnectFourBoard, piece: Piece) -> Move | None:
+    def solve(self, board: ConnectFourBoard, piece: PieceEnum) -> Move | None:
+        if piece not in [PieceEnum.HUMAN, PieceEnum.CPU]:
+            raise ValueError("Invalid piece for MinimaxAlphaBetaPruningSolver.")
+
         _, best_move = self.minimax_alpha_beta_pruning(
             board=board,
             depth=self.depth,
@@ -31,7 +34,7 @@ class MinimaxAlphaBetaPruningSolver(Solver):
         alpha,
         beta,
         max_player,
-        piece: Piece,
+        piece: PieceEnum,
     ) -> tuple[float, Move | None]:
         if depth == 0 or not board.get_possible_moves():
             sign = 1 if max_player else -1
@@ -56,7 +59,7 @@ class MinimaxAlphaBetaPruningSolver(Solver):
                     alpha=alpha,
                     beta=beta,
                     max_player=False,
-                    piece=3 - piece,
+                    piece=PieceEnum(3 - piece.value),
                 )
 
                 if eval > max_eval:
@@ -87,7 +90,7 @@ class MinimaxAlphaBetaPruningSolver(Solver):
                     alpha=alpha,
                     beta=beta,
                     max_player=True,
-                    piece=3 - piece,
+                    piece=PieceEnum(3 - piece.value),
                 )
 
                 if eval < min_eval:

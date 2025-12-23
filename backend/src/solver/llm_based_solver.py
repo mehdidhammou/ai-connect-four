@@ -1,4 +1,4 @@
-from src.types.piece import Piece
+from src.types.piece_enum import PieceEnum
 from .solver import Solver
 from src.model import ModelProvider
 from src.board.connect_four_board import ConnectFourBoard
@@ -10,7 +10,12 @@ class LLMBasedSolver(Solver):
         self.model_provider = model_provider
         self.model_name = model_name
 
-    def solve(self, board: ConnectFourBoard, piece: Piece) -> Move | None:
+    def solve(self, board: ConnectFourBoard, piece: PieceEnum) -> Move | None:
+        if piece not in [PieceEnum.HUMAN, PieceEnum.CPU]:
+            raise ValueError("Invalid piece for LLMBasedSolver.")
+
         return self.model_provider.get_move(
-            board=board, piece=piece, model_name=self.model_name
+            board=board,
+            piece=piece,
+            model_name=self.model_name,
         )

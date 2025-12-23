@@ -1,13 +1,13 @@
 from src.board.connect_four_board import ConnectFourBoard
 from src.types.move import Move
-from src.types.piece import Piece
+from src.types.piece_enum import PieceEnum
 
 from .heuristic import Heuristic
 
 
 class CountPiecesHeuristic(Heuristic):
     @staticmethod
-    def evaluate(board: ConnectFourBoard, piece: Piece) -> int:
+    def evaluate(board: ConnectFourBoard, piece: PieceEnum) -> int:
         if board.has_won(piece=piece):
             return 999_999
 
@@ -18,7 +18,7 @@ class CountPiecesHeuristic(Heuristic):
         return Move(col=0, row=0)
 
     @staticmethod
-    def _evaluate_board(board: ConnectFourBoard, piece):
+    def _evaluate_board(board: ConnectFourBoard, piece: PieceEnum):
         score = 0
         # Evaluate based on consecutive pieces in rows
         for row in range(board.rows):
@@ -47,10 +47,10 @@ class CountPiecesHeuristic(Heuristic):
         return score
 
     @staticmethod
-    def evaluateWindow(window: list, piece):
-        if window.count(piece) == 3 and window.count(0) == 1:
+    def evaluateWindow(window: list, piece: PieceEnum):
+        if window.count(piece) == 3 and window.count(PieceEnum.EMPTY) == 1:
             return 10  # Encourage completing a winning sequence
-        elif window.count(piece) == 2 and window.count(0) == 2:
+        elif window.count(piece) == 2 and window.count(PieceEnum.EMPTY) == 2:
             return 5  # Encourage creating opportunities
         else:
             return 0

@@ -3,7 +3,7 @@ from mistralai.models import UserMessage
 
 from src.board.connect_four_board import ConnectFourBoard
 from src.types.move import Move
-from src.types.piece import Piece
+from src.types.piece_enum import PieceEnum
 
 from .model import Model
 from .model_provider import ModelProvider
@@ -39,7 +39,7 @@ class MistralModelProvider(ModelProvider):
         return list(unique_models.values())
 
     def get_move(
-        self, board: ConnectFourBoard, piece: Piece, model_name: str
+        self, board: ConnectFourBoard, piece: PieceEnum, model_name: str
     ) -> Move | None:
         with Mistral(
             api_key=self.api_key,
@@ -52,7 +52,7 @@ class MistralModelProvider(ModelProvider):
             )
             return self._parse_move_response(response.choices[0].message.content)
 
-    def _create_prompt(self, board: ConnectFourBoard, piece: Piece) -> UserMessage:
+    def _create_prompt(self, board: ConnectFourBoard, piece: PieceEnum) -> UserMessage:
         prompt = "Connect Four Board State:\n"
         for row in board.state:
             prompt += " | ".join(str(cell) for cell in row) + "\n"

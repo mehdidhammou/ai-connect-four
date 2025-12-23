@@ -1,6 +1,7 @@
 from random import random
 from unittest import TestCase
 
+from src.types.piece_enum import PieceEnum
 from src.board.connect_four_board import ConnectFourBoard
 from src.types.move import Move
 
@@ -63,7 +64,7 @@ class TestConnectFourBoard(TestCase):
             [1, 1, 1, 1, 0, 0, 0],
         ]
         board = ConnectFourBoard(initial_state)
-        self.assertTrue(board.has_won(1))
+        self.assertTrue(board.has_won(PieceEnum.HUMAN))
         self.assertEqual(
             board.winning_sequence,
             [
@@ -85,7 +86,7 @@ class TestConnectFourBoard(TestCase):
             [1, 0, 0, 0, 1, 0, 0],
         ]
         board = ConnectFourBoard(initial_state)
-        self.assertTrue(board.has_won(1))
+        self.assertTrue(board.has_won(PieceEnum.HUMAN))
         self.assertEqual(
             board.winning_sequence,
             [
@@ -107,7 +108,7 @@ class TestConnectFourBoard(TestCase):
             [1, 0, 0, 0, 0, 0, 0],
         ]
         board = ConnectFourBoard(initial_state)
-        self.assertTrue(board.has_won(1))
+        self.assertTrue(board.has_won(PieceEnum.HUMAN))
         self.assertIsNotNone(board.winning_sequence)
         self.assertCountEqual(
             board.winning_sequence,
@@ -130,7 +131,7 @@ class TestConnectFourBoard(TestCase):
             [1, 2, 1, 2, 1, 2, 1],
         ]
         board = ConnectFourBoard(initial_state)
-        self.assertFalse(board.has_won(1))
+        self.assertFalse(board.has_won(PieceEnum.HUMAN))
         self.assertEqual(board.winning_sequence, None)
 
     def test_is_empty_true(self):

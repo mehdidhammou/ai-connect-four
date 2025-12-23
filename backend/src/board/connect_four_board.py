@@ -1,13 +1,15 @@
 from src.types.move import Move
-from src.types.piece import Piece
+from src.types.piece_enum import PieceEnum
 
 
 class ConnectFourBoard:
-    def __init__(self, initial_state: list[list[Piece]] | None = None):
+    def __init__(self, initial_state: list[list[PieceEnum]] | None = None):
         self.rows = 6
         self.cols = 7
         self.winning_sequence: list[Move] | None = None
-        self.state = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
+        self.state = [
+            [PieceEnum.EMPTY for _ in range(self.cols)] for _ in range(self.rows)
+        ]
 
         if initial_state:
             if len(initial_state) != self.rows or len(initial_state[0]) != self.cols:
@@ -17,7 +19,7 @@ class ConnectFourBoard:
             else:
                 self.state = [[_ for _ in row] for row in initial_state]
 
-    def make_move(self, move: Move, piece: Piece) -> None:
+    def make_move(self, move: Move, piece: PieceEnum) -> None:
         if move not in self.get_possible_moves():
             raise ValueError("Invalid move")
 
@@ -32,7 +34,7 @@ class ConnectFourBoard:
                     break
         return moves
 
-    def has_won(self, piece: Piece) -> bool:
+    def has_won(self, piece: PieceEnum) -> bool:
         directions = [
             (0, 1),
             (1, 0),

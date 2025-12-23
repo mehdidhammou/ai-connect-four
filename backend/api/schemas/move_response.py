@@ -5,5 +5,5 @@ from src.types.move import Move
 
 class MoveResponse(BaseModel):
     state: GameState
-    move: Move | None
-    sequence: list[Move] | None
+    solver_move: Move | None
+    winning_sequence: list[Move] | None
