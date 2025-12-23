@@ -5,18 +5,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { gameStateMessages } from "@/lib/consts";
 import { useGameStore } from "@/stores/game-store";
 import { Separator } from "@radix-ui/react-separator";
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { Button } from "../ui/button";
 
 const GameOverDialog = () => {
-  const gameState = useGameStore((state) => state.state);
-  const message = useGameStore((state) => state.message);
-  const reset = useGameStore((state) => state.reset);
-
+  const { gameState, reset } = useGameStore();
   if (gameState === "CONTINUE") return null;
-
+  const message = gameStateMessages[gameState];
   return (
     <Dialog defaultOpen>
       <DialogContent>

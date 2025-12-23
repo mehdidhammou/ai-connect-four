@@ -1,3 +1,4 @@
+import { players } from "@/lib/consts";
 import { Player } from "@/lib/types";
 import { useGameStore } from "@/stores/game-store";
 import { ArrowLeft } from "lucide-react";
@@ -13,14 +14,13 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { players } from "@/lib/consts";
 
-const StarterSelector = () => {
-  const { currentPlayer, setCurrentPlayer } = useGameStore();
+const GameStarterSelector = () => {
+  const { startingPlayer: startingPlayer, setStartingPlayer } = useGameStore();
   const [selectedStarter, setSelectedStarter] = useState<Player>("human");
 
   return (
-    <Dialog open={!currentPlayer}>
+    <Dialog open={!startingPlayer}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Who starts first?</DialogTitle>
@@ -49,7 +49,7 @@ const StarterSelector = () => {
           <div className="flex flex-col w-full gap-2">
             <Button
               disabled={!selectedStarter}
-              onClick={() => setCurrentPlayer(selectedStarter)}
+              onClick={() => setStartingPlayer(selectedStarter)}
             >
               Start
             </Button>
@@ -66,4 +66,4 @@ const StarterSelector = () => {
   );
 };
 
-export default StarterSelector;
+export default GameStarterSelector;

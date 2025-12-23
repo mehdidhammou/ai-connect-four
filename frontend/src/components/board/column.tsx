@@ -1,9 +1,11 @@
+import { makeMove } from "@/api/move";
 import { PIECE } from "@/lib/consts";
-import { Heuristic, Piece } from "@/lib/types";
-import { useBoardStore } from "@/stores/board-store";
+import { MoveRequest, Piece, SolverType } from "@/lib/types";
 import { useGameStore } from "@/stores/game-store";
+import { useMutation } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import Cell from "./cell";
+import { getMoveFromColIdx } from "@/lib/utils";
 
 type ColumnProps = {
   column: Piece[];
@@ -11,19 +13,44 @@ type ColumnProps = {
 };
 
 const Column = ({ column, colIdx }: ColumnProps) => {
-  const { makeMove, sync, sequence, isSyncing } = useBoardStore();
-  const { auto, state: gameState } = useGameStore();
-  const { heuristic } = useParams<{ heuristic: Heuristic }>();
-  const disabled =
-    isSyncing || column[0] !== PIECE.Empty || auto || gameState !== "CONTINUE";
+  const { board, gameState, setGameState, startingPlayer, applyMove } =
+    useGameStore();
 
-  const handleClick = async () => {
-    if (disabled) {
-      return;
-    }
-    makeMove(colIdx, 1);
-    // @ts-expect-error common useParams type
-    await sync(heuristic);
+  const { solver, name } = useParams<{
+    solver: SolverType["type"];
+    name: string;
+  }>();
+
+  const { mutate, data, isPending } = useMutation({
+    mutationFn: makeMove,
+    onSuccess: async (data) => {
+      setGameState(data.state);
+      applyMove(getMoveFromColIdx(board, colIdx)!, PIECE.HUMAN);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      applyMove(data.solver_move!, PIECE.CPU);
+    },
+  });
+
+  const disabled =
+    isPending ||
+    column[0] !== PIECE.EMPTY ||
+    gameState !== "CONTINUE" ||
+    !startingPlayer ||
+    !solver ||
+    !name;
+
+  const handleClick = () => {
+    if (disabled) return;
+    const moveRequest: MoveRequest = {
+      board: board,
+      player_move: getMoveFromColIdx(board, colIdx)!,
+      starting_player: startingPlayer!,
+      solver: {
+        type: solver!,
+        name: name!,
+      } as SolverType,
+    };
+    mutate(moveRequest);
   };
 
   return (
@@ -37,7 +64,7 @@ const Column = ({ column, colIdx }: ColumnProps) => {
           key={index}
           value={val}
           highlight={
-            sequence?.some(
+            data?.winning_sequence?.some(
               (move) => move.col === colIdx && move.row === index
             ) || false
           }

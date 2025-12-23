@@ -1,20 +1,18 @@
 import Board from "../board";
+import { Card, CardContent } from "../ui/card";
+import { Separator } from "../ui/separator";
 import GameHeader from "./game-header";
 import GameOverDialog from "./game-over-dialog";
-import StarterSelector from "./starter-selector";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Separator } from "../ui/separator";
+import GameStarterSelector from "./game-starter-selector";
 
-const LLMGame = () => {
+const Game = () => {
   return (
     <>
-      <StarterSelector />
+      <GameStarterSelector />
       <GameOverDialog />
       <div className="w-full row-span-3">
-        <Card>
-          <CardHeader>
-            <GameHeader />
-          </CardHeader>
+        <GameHeader />
+        <Card className="mt-6">
           <Separator />
           <CardContent className="p-6">
             <Board />
@@ -25,4 +23,4 @@ const LLMGame = () => {
   );
 };
 
-export default LLMGame;
+export default Game;

@@ -1,5 +1,4 @@
-import AutoGame from "./auto-game";
-import DefaultGame from "./default-game";
+import Game from "./game";
 import GameOverDialog from "./game-over-dialog";
-import StarterSelector from "./starter-selector";
-export { AutoGame, DefaultGame as Game, GameOverDialog, StarterSelector };
+import GameStarterSelector from "./game-starter-selector";
+export { Game, GameOverDialog, GameStarterSelector as StarterSelector };

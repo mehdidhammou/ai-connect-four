@@ -1,10 +1,9 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import AutoGame from "./components/game/auto-game";
-import DefaultGame from "./components/game/default-game";
+import Game from "./components/game/game";
 import Header from "./components/header";
 import MainMenu from "./components/main-menu";
 import { ThemeProvider } from "./providers/theme-provider";
-import LLMGame from "./components/game/llm-game";
+
 const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -13,9 +12,7 @@ const App = () => {
         <Router>
           <Routes>
             <Route path="/" element={<MainMenu />} />
-            <Route path="/vs-heuristic/:heuristic" element={<DefaultGame />} />
-            <Route path="/heuristic-vs-heuristic" element={<AutoGame />} />
-            <Route path="/vs-llm/:provider/:model" element={<LLMGame />} />
+            <Route path="/play/:solver/:name" element={<Game />} />
           </Routes>
         </Router>
       </div>

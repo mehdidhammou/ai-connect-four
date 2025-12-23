@@ -1,9 +1,9 @@
 import { transpose } from "@/lib/utils";
+import { useGameStore } from "@/stores/game-store";
 import Column from "./column";
-import { useBoardStore } from "@/stores/board-store";
 
 const Board = () => {
-  const board = useBoardStore((state) => state.board);
+  const board = useGameStore((state) => state.board);
   return (
     <div className="flex items-center justify-center">
       {transpose(board).map((col, index) => (

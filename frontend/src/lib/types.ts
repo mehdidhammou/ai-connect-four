@@ -8,7 +8,7 @@ export type GameMode = {
     Icon2: LucideIcon,
 };
 
-export type GameState = "CONTINUE" | "WIN" | "LOSE" | "TIE" | "MM_POS_WIN" | "MM_PIECE_WIN";
+export type GameState = "CONTINUE" | "WIN" | "LOSE" | "TIE";
 
 export type ObjectValues<T> = T[keyof T];
 
@@ -16,7 +16,9 @@ export type Piece = ObjectValues<typeof PIECE>;
 
 export type Board = Piece[][];
 
-export type Heuristic = "pieces" | "positions";
+export type HeuristicName = "pieces" | "positions";
+
+export type ModelProviderName = "mistral";
 
 export type Player = typeof players[number];
 
@@ -25,21 +27,27 @@ export type Move = {
     col: number,
 };
 
-export type GameResponse = {
-    success: boolean,
+export interface HeuristicSolver {
+    type: "heuristic";
+    name: HeuristicName;
+}
+
+export interface LLMSolver {
+    type: ModelProviderName;
+    name: string;
+}
+
+export type SolverType = HeuristicSolver | LLMSolver;
+
+export type MoveRequest = {
     board: Board,
-    message: string,
+    starting_player: Player,
+    player_move: Move,
+    solver: SolverType,
+};
+
+export type MoveResponse = {
     state: GameState,
-    sequence: Move[],
-};
-
-export type Model = {
-    name: string,
-    description: string,
-};
-
-export type ModelResponse = {
-    data: Model[],
-};
-
-
+    solver_move: Move | null,
+    winning_sequence: Move[] | null,
+}

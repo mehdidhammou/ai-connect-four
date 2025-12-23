@@ -1,39 +1,30 @@
 import { useGameStore } from "@/stores/game-store";
-import { ArrowLeft, Cpu } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 
 const GameHeader = () => {
-  const currentPlayer = useGameStore((state) => state.currentPlayer);
   const reset = useGameStore((state) => state.reset);
-  const { heuristic } = useParams();
+  const { solver, name } = useParams();
   return (
-    <div className="grid items-center grid-cols-4">
-      <div className="flex items-center">
+    <div className="flex items-center justify-between p-6 border rounded-xl">
+      <div className="flex items-center gap-2 p-2 rounded-full">
         <Button
           onClick={reset}
           asChild
           variant={"ghost"}
           className="mr-2"
-          size={"icon"}
+          size={"sm"}
         >
           <Link to={"/"}>
             <ArrowLeft />
           </Link>
         </Button>
-        <Badge variant={"secondary"} className="capitalize text-md w-fit">
-          <Cpu className="mr-2" />
-          {heuristic}
-        </Badge>
+        <Badge>{solver}</Badge>/<Badge>{name}</Badge>
       </div>
-
-      <div className="grid col-span-2 place-items-center">
-        <h3 className="text-xl font-semibold">{currentPlayer}'s turn</h3>
-      </div>
-
       <div className="flex">
-        <Button className="ml-auto" variant={"destructive"} onClick={reset}>
+        <Button variant={"destructive"} onClick={reset}>
           Restart
         </Button>
       </div>

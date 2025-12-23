@@ -1,44 +1,35 @@
-import { GameState, Player } from "@/lib/types";
+import { Board, GameState, Move, Piece, Player } from "@/lib/types";
+import { createEmptyBoard } from "@/lib/utils";
 import { create } from "zustand";
-import { useBoardStore } from "./board-store";
 
 
 type GameStateStore = {
-    currentPlayer: Player,
-    state: GameState,
-    message: string,
-    auto: boolean,
+    board: Board,
+    gameState: GameState,
+    startingPlayer: Player | undefined,
 }
+
+const getInitialGameState = (): GameStateStore => ({
+    board: createEmptyBoard(),
+    gameState: "CONTINUE",
+    startingPlayer: undefined,
+})
 
 type GameActionsStore = {
-    setMessage: (message: string) => void,
-    setState: (state: GameState) => void,
+    applyMove: (move: Move, piece: Piece) => void,
     reset: () => void,
-    toggleTurn: () => void,
-    setCurrentPlayer: (player: Player) => void,
-    setAuto: (auto: boolean) => void,
+    setGameState: (state: GameState) => void,
+    setStartingPlayer: (player: Player) => void,
 }
 
-export const useGameStore = create<GameStateStore & GameActionsStore>((set, get) => ({
-    currentPlayer: undefined,
-    state: "CONTINUE",
-    message: "Continue",
-    auto: false,
-    reset: () => {
-        useBoardStore.getState().reset();
-        set({ currentPlayer: undefined, state: "CONTINUE", message: "Continue" });
-    },
-    setAuto: (auto) => set({ auto }),
-    toggleTurn: () => {
-        let nextPlayer: Player;
-        if (get().auto) {
-            nextPlayer = get().currentPlayer === "pieces" ? "positions" : "pieces";
-        } else {
-            nextPlayer = get().currentPlayer === "CPU" ? "Human" : "CPU";
-        }
-        set({ currentPlayer: nextPlayer })
-    },
-    setCurrentPlayer: (player) => set({ currentPlayer: player }),
-    setMessage: (message) => set({ message }),
-    setState: (gameState) => set({ state: gameState }),
+export const useGameStore = create<GameStateStore & GameActionsStore>((set) => ({
+    ...getInitialGameState(),
+    applyMove: (move: Move, piece: Piece) => set((state) => {
+        const newBoard = state.board.map((row) => [...row]);
+        newBoard[move.row][move.col] = piece;
+        return { board: newBoard };
+    }),
+    setStartingPlayer: (player: Player) => set({ startingPlayer: player }),
+    setGameState: (state: GameState) => set({ gameState: state }),
+    reset: () => set(getInitialGameState()),
 }));
