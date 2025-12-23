@@ -24,7 +24,7 @@ from src.model import MistralModelProvider, ModelProviderFactory
 from src.solver import MinimaxAlphaBetaPruningSolver
 from src.types.heuristic_enum import HeuristicEnum
 from src.types.model_provider_enum import ModelProviderEnum
-from src.types.solver_type import SolverType
+from src.types.solver_type import LLMSolver, MinimaxSolver, SolverType
 from src.utils import get_solver
 
 
@@ -64,12 +64,21 @@ async def ping():
 
 @app.get("/solvers", response_model=ApiResponse[list[SolverType]])
 async def get_solvers():
-    solvers = [
-        solver(type=type_literal, name=name)
-        for solver in get_args(SolverType)
-        for type_literal in solver.model_fields["type"].annotation.__args__
-        for name in solver.model_fields["name"].annotation
-    ]
+    solvers = []
+
+    for solver_cls in get_args(SolverType):
+        type_literals = get_args(solver_cls.model_fields["type"].annotation)
+
+        if issubclass(solver_cls, MinimaxSolver):
+            for type_literal in type_literals:
+                for name in HeuristicEnum:  # iterate over enum members
+                    solvers.append(MinimaxSolver(type=type_literal, name=name))
+        elif issubclass(solver_cls, LLMSolver):
+            for type_literal in type_literals:
+                for provider in ModelProviderEnum:
+                    solvers.append(
+                        LLMSolver(type=type_literal, provider=provider, name="default")
+                    )
 
     return ApiResponse(data=solvers)
 

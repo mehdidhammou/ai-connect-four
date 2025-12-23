@@ -7,15 +7,17 @@ export const PIECE = {
     PlayerTwo: 2,
 } as const;
 
+export const players = ['human', 'cpu'] as const;
+
 export const gameModes: GameMode[] = [
     {
-        "name": "Human vs Heuristic (Counting pieces)",
+        "name": "Human vs Pieces Heuristic",
         "link": "/vs-heuristic/pieces",
         "Icon1": User,
         "Icon2": Cpu,
     },
     {
-        "name": "Human vs Heuristic (Counting positions)",
+        "name": "Human vs Positions Heuristic",
         "link": "/vs-heuristic/positions",
         "Icon1": User,
         "Icon2": Cpu,

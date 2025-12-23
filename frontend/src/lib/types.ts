@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react";
-import { PIECE } from "./consts";
+import { PIECE, players } from "./consts";
 
 export type GameMode = {
     name: string,
@@ -18,7 +18,7 @@ export type Board = Piece[][];
 
 export type Heuristic = "pieces" | "positions";
 
-export type Player = "Human" | "Heuristic" | "LLM" | undefined;
+export type Player = typeof players[number];
 
 export type Move = {
     row: number,

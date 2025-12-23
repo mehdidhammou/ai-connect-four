@@ -24,7 +24,7 @@ const GameHeader = () => {
         </Button>
         <Badge variant={"secondary"} className="capitalize text-md w-fit">
           <Cpu className="mr-2" />
-          {heuristic} AI
+          {heuristic}
         </Badge>
       </div>
 

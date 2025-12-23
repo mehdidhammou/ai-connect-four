@@ -8,7 +8,7 @@ import { Separator } from "../ui/separator";
 const LLMGame = () => {
   return (
     <>
-      <StarterSelector players={["Human", "LLM"]} />
+      <StarterSelector />
       <GameOverDialog />
       <div className="w-full row-span-3">
         <Card>

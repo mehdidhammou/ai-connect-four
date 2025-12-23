@@ -30,7 +30,7 @@ const AutoGame = () => {
 
   return (
     <>
-      <StarterSelector players={["pieces", "positions"]} />
+      <StarterSelector />
       <GameOverDialog />
       <div className="w-full row-span-3">
         <Card>

@@ -1,0 +1,17 @@
+game_state : init
+- frontend: select initial player
+- if cpu first : POST /move
+	- api returns Move(col, row), game_state, winning_sequence
+	- frontend applies it
+	- toggle_turn
+	- player plays
+	- update board
+	- POST /move
+	- api receives board, and next player piece, and return best_move, game_state, winning_sequence
+	- frontend receives
+	- if game_state tie, switch state to end, 
+	- if game_state = win or lose : switch_state
+
+
+there's a problem with the minimax solver, how do we know for which piece do we generate a move for
+checkout old commits the data shape of a the auto move. commit (b013fdeadeea40d4486c41e415021c2fae7d7eb0)

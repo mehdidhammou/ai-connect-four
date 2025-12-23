@@ -1,10 +1,8 @@
-import { PIECE } from "@/lib/consts";
 import { Player } from "@/lib/types";
-import { useBoardStore } from "@/stores/board-store";
 import { useGameStore } from "@/stores/game-store";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -15,28 +13,11 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { players } from "@/lib/consts";
 
-const StarterSelector = ({ players }: { players: Player[] }) => {
-  const makeMove = useBoardStore((state) => state.makeMove);
-
+const StarterSelector = () => {
   const { currentPlayer, setCurrentPlayer } = useGameStore();
-  const [selectedStarter, setSelectedStarter] = useState<Player>();
-  // @ts-expect-error Typical react router param type inference error
-  const { heuristic } = useParams<{ heuristic: Heuristic }>();
-
-  const handleStartClick = () => {
-    setCurrentPlayer(selectedStarter);
-    if (selectedStarter === "CPU") {
-      switch (heuristic) {
-        case "PIECES":
-          makeMove(0, PIECE.Cpu);
-          break;
-        case "POSITIONS":
-          makeMove(3, PIECE.Cpu);
-          break;
-      }
-    }
-  };
+  const [selectedStarter, setSelectedStarter] = useState<Player>("human");
 
   return (
     <Dialog open={!currentPlayer}>
@@ -48,6 +29,7 @@ const StarterSelector = ({ players }: { players: Player[] }) => {
           variant={"outline"}
           value={selectedStarter}
           onValueChange={(value) => setSelectedStarter(value as Player)}
+          defaultValue="human"
           type="single"
           size={"lg"}
           className="grid grid-cols-2"
@@ -65,7 +47,10 @@ const StarterSelector = ({ players }: { players: Player[] }) => {
         <Separator />
         <DialogFooter>
           <div className="flex flex-col w-full gap-2">
-            <Button disabled={!selectedStarter} onClick={handleStartClick}>
+            <Button
+              disabled={!selectedStarter}
+              onClick={() => setCurrentPlayer(selectedStarter)}
+            >
               Start
             </Button>
             <Button asChild variant={"outline"}>

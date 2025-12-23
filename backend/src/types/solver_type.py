@@ -12,7 +12,7 @@ class MinimaxSolver(BaseModel):
 class LLMSolver(BaseModel):
     type: Literal["llm"]
     provider: ModelProviderEnum
-    model_name: str
+    name: str
 
 
 SolverType = MinimaxSolver | LLMSolver

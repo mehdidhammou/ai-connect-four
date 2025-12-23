@@ -13,7 +13,7 @@ def get_solver(solver_type: SolverType):
     elif solver_type.type == "llm":
         model_provider = ModelProviderFactory.create(solver_type.provider)
         return LLMBasedSolver(
-            model_provider=model_provider, model_name=solver_type.model_name
+            model_provider=model_provider, model_name=solver_type.name
         )
 
     else:

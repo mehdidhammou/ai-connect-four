@@ -8,10 +8,10 @@ import { Separator } from "../ui/separator";
 const DefaultGame = () => {
   return (
     <>
-      <StarterSelector players={["Human", "Heuristic"]} />
+      <StarterSelector />
       <GameOverDialog />
       <div className="w-full row-span-3">
-        <Card >
+        <Card>
           <CardHeader>
             <GameHeader />
           </CardHeader>

@@ -14,8 +14,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<MainMenu />} />
             <Route path="/vs-heuristic/:heuristic" element={<DefaultGame />} />
-            <Route path="/vs-llm/:provider/:model" element={<LLMGame />} />
             <Route path="/heuristic-vs-heuristic" element={<AutoGame />} />
+            <Route path="/vs-llm/:provider/:model" element={<LLMGame />} />
           </Routes>
         </Router>
       </div>
