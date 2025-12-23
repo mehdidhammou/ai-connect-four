@@ -22,7 +22,6 @@ from src.heuristic import (
 )
 from src.model import MistralModelProvider, ModelProviderFactory
 from src.solver import MinimaxAlphaBetaPruningSolver
-from src.solver.llm_based_solver import LLMBasedSolver
 from src.types.heuristic_enum import HeuristicEnum
 from src.types.model_provider_enum import ModelProviderEnum
 from src.types.solver_type import SolverType
@@ -168,14 +167,21 @@ async def move(data: MoveRequest):
     )
 
     try:
-        # play the player's move first
-        game.make_move(move=data.player_move, piece=data.player_piece)
-
-        best_move = None
-        if not game.is_over():
+        # handle case where cpu starts first
+        if data.starting_player == "cpu" and game.board.is_empty():
             best_move = game.get_solver_move(piece=data.solver_piece)
             if best_move is not None:
                 game.make_move(move=best_move, piece=data.solver_piece)
+
+        else:
+            # play the player's move first
+            game.make_move(move=data.player_move, piece=data.player_piece)
+
+            best_move = None
+            if not game.is_over():
+                best_move = game.get_solver_move(piece=data.solver_piece)
+                if best_move is not None:
+                    game.make_move(move=best_move, piece=data.solver_piece)
 
         return ApiResponse(
             data=MoveResponse(

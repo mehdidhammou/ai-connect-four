@@ -58,3 +58,10 @@ class ConnectFourBoard:
                         return True
 
         return False
+
+    def is_empty(self) -> bool:
+        return all(
+            self.state[row][col] == 0
+            for row in range(self.rows)
+            for col in range(self.cols)
+        )

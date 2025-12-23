@@ -131,3 +131,21 @@ class TestConnectFourBoard(TestCase):
         board = ConnectFourBoard(initial_state)
         self.assertFalse(board.has_won(1))
         self.assertEqual(board.winning_sequence, None)
+
+    def test_is_empty_true(self):
+        # Test when board is empty
+        board = ConnectFourBoard()
+        self.assertTrue(board.is_empty())
+
+    def test_is_empty_false(self):
+        # Test when board has pieces
+        initial_state = [[0] * 7 for _ in range(6)]
+        initial_state[5][0] = 1
+        board = ConnectFourBoard(initial_state)
+        self.assertFalse(board.is_empty())
+
+    def test_is_empty_full_board(self):
+        # Test when board is completely full
+        initial_state = [[1] * 7 for _ in range(6)]
+        board = ConnectFourBoard(initial_state)
+        self.assertFalse(board.is_empty())
