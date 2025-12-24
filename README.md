@@ -35,6 +35,8 @@ curl -X POST http://localhost:5000/move/{solver}/{name} \
 '
 ```
 
+Where `solver` is either `heuristic` or `llm`, and `name` is the name of the heuristic or the LLM provider.
+
 the response will be:
 
 ```json
@@ -44,8 +46,6 @@ the response will be:
   "winning_sequence": [{}...]
 }
 ```
-
-Where `solver` is either `heuristic` or `llm`, and `name` is the name of the heuristic or the LLM provider.
 
 ### Setup
 
