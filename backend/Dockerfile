@@ -25,19 +25,14 @@ ENV WORKERS=4
 RUN groupadd --system --gid 999 nonroot \
     && useradd --system --gid 999 --uid 999 --create-home nonroot
 
-# Copy the application from the builder
 COPY --from=builder --chown=nonroot:nonroot /app /app
 
-# Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Use the non-root user to run our application
 USER nonroot
 
-# Use `/app` as the working directory
 WORKDIR /app
 
 EXPOSE 5000
 
-# Run the FastAPI application by default
 CMD uvicorn api.main:app --host 0.0.0.0 --port 5000 --workers $WORKERS

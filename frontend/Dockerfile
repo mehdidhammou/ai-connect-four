@@ -1,20 +1,16 @@
-FROM node:20-slim
+FROM node:20-slim AS build
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 WORKDIR /app
-
-RUN npm install -g corepack@latest
 RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
-
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY . .
+RUN pnpm build
 
-RUN pnpm run build
-
-EXPOSE 3000
-
-CMD ["npx", "serve", "-s", "dist", "-l", "3000"]
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
