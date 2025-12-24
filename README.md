@@ -1,18 +1,51 @@
-# Connect Four Game: Human vs Computer (Minimax Algorithm)
+# Connect Four: Human vs AI.
 
-This project presents a Connect Four game where a human player faces off against an AI opponent implemented using the minimax algorithm with alpha-beta pruning with two heuristics.
+## NEW: Play against LLMs
 
-### 1. Count pieces heuristic
+After a major refactor, the game now supports playing against popular LLMs.
 
-The first heuristic is based on the number of pieces on the board. The AI will try to maximize the number of its pieces on the board while minimizing the number of the human player's pieces.
+Mistral models are now available to play against.
 
-### 2. Count winning positions heuristic
+## Introduction
 
-The second heuristic is based on the number of winning positions on the board. The AI will try to maximize the number of winning positions it has while minimizing the number of winning positions the human player has.
+Play against two of the most unbeatable heuristics in a game of connect four. This project presents a Connect Four game where a human player faces off against an AI opponent implemented using the minimax algorithm with alpha-beta pruning with two heuristics.
 
-## Overview
+## Architecture
 
-This Connect Four game allows users to challenge the computer AI in a classic game. The game utilizes a Flask backend to manage game logic and provide API endpoints, while the React frontend offers a user-friendly interface.
+The following illustration demonstrates the dependencies between the classes.
+
+![Data Model](docs/data_model.svg)
+
+A Solver is either a heuristic or an LLM provider.
+
+The API primarily interacts with the `Game` class, which manages the game state and logic, the API is stateless which means the board state is passed with each request and is validated on the backend.
+
+API consumers can POST moves with the following payload:
+
+```json
+
+curl -X POST http://localhost:5000/move/{solver}/{name} \
+  -H "Content-Type: application/json" \
+  -d '
+{
+  "board": [[...]],
+  "starting_player" : "human",
+  "player_move": {"col": 3, "row": 5}
+}
+'
+```
+
+the response will be:
+
+```json
+{
+  "state": "CONTINUE",
+  "solver_move": {"col": 2, "row": 4},
+  "winning_sequence": [{}...]
+}
+```
+
+Where `solver` is either `heuristic` or `llm`, and `name` is the name of the heuristic or the LLM provider.
 
 ### Setup
 
@@ -31,6 +64,16 @@ Open the frontend in a web browser at `http://localhost:8000` and simply follow 
 ### Objective
 
 The objective of the game is to connect four of your own discs in a row, either horizontally, vertically, or diagonally, before your opponent does.
+
+### Heuristics
+
+#### 1. Count pieces heuristic
+
+The first heuristic is based on the number of pieces on the board. The AI will try to maximize the number of its pieces on the board while minimizing the number of the human player's pieces.
+
+#### 2. Count winning positions heuristic
+
+The second heuristic is based on the number of winning positions on the board. The AI will try to maximize the number of winning positions it has while minimizing the number of winning positions the human player has.
 
 ## License
 
