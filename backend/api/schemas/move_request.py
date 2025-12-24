@@ -9,4 +9,3 @@ class MoveRequest(BaseModel):
     board: list[list[PieceEnum]]
     starting_player: Literal["human", "cpu"]
     player_move: Move
-    solver: SolverType

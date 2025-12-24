@@ -1,9 +1,11 @@
-import { players } from "@/lib/consts";
-import { Player } from "@/lib/types";
+import { getFirstMove } from "@/api/move";
+import { PIECE, players } from "@/lib/consts";
+import { Player, SolverType } from "@/lib/types";
 import { useGameStore } from "@/stores/game-store";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -16,8 +18,30 @@ import { Separator } from "../ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 const GameStarterSelector = () => {
-  const { startingPlayer: startingPlayer, setStartingPlayer } = useGameStore();
+  const {
+    applyMove,
+    startingPlayer: startingPlayer,
+    setStartingPlayer,
+  } = useGameStore();
   const [selectedStarter, setSelectedStarter] = useState<Player>("human");
+
+  const { solver, name } = useParams<{
+    solver: SolverType["type"];
+    name: string;
+  }>();
+
+  const { data: firstMove } = useQuery({
+    queryKey: ["firstMove"],
+    queryFn: () => getFirstMove({ name: name!, type: solver! } as SolverType),
+    enabled: !!solver && !!name,
+  });
+
+  const onSelectStarter = () => {
+    setStartingPlayer(selectedStarter);
+    if (selectedStarter === "cpu" && firstMove) {
+      applyMove(firstMove, PIECE.CPU);
+    }
+  };
 
   return (
     <Dialog open={!startingPlayer}>
@@ -47,10 +71,7 @@ const GameStarterSelector = () => {
         <Separator />
         <DialogFooter>
           <div className="flex flex-col w-full gap-2">
-            <Button
-              disabled={!selectedStarter}
-              onClick={() => setStartingPlayer(selectedStarter)}
-            >
+            <Button disabled={!selectedStarter} onClick={onSelectStarter}>
               Start
             </Button>
             <Button asChild variant={"outline"}>

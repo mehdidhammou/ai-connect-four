@@ -11,12 +11,10 @@ class Game:
         self,
         board: ConnectFourBoard,
         solver: Solver,
-        auto: bool = False,
     ):
         self.board = board
         self.solver = solver
         self.state: GameState = "CONTINUE"
-        self.auto = auto
         self.sync_state()
 
     def make_move(self, move: Move, piece: PieceEnum) -> None:

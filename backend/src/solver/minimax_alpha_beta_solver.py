@@ -103,3 +103,6 @@ class MinimaxAlphaBetaPruningSolver(Solver):
                     break
 
             return min_eval, best_move
+
+    def first_move(self) -> Move:
+        return self.heuristic.first_move()

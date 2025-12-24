@@ -22,8 +22,8 @@ class CountPositionsHeuristic(Heuristic):
         return score
 
     @staticmethod
-    def first_play() -> Move:
-        return Move(col=3, row=0)
+    def first_move() -> Move:
+        return Move(col=3, row=5)
 
     @staticmethod
     def _evaluate_center_control(board: ConnectFourBoard, piece: PieceEnum):

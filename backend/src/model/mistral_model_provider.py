@@ -69,3 +69,6 @@ class MistralModelProvider(ModelProvider):
             return Move(col=col, row=row)
         except Exception:
             return None
+
+    def get_first_move(self, model_name: str) -> Move:
+        return Move(col=0, row=5)  # Assuming row 0 is the bottom row

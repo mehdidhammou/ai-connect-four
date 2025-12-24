@@ -14,8 +14,8 @@ class CountPiecesHeuristic(Heuristic):
         return CountPiecesHeuristic._evaluate_board(board, piece)
 
     @staticmethod
-    def first_play() -> Move:
-        return Move(col=0, row=0)
+    def first_move() -> Move:
+        return Move(col=0, row=5)
 
     @staticmethod
     def _evaluate_board(board: ConnectFourBoard, piece: PieceEnum):

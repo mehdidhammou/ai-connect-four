@@ -19,3 +19,6 @@ class LLMBasedSolver(Solver):
             piece=piece,
             model_name=self.model_name,
         )
+
+    def first_move(self) -> Move:
+        return self.model_provider.get_first_move(model_name=self.model_name)

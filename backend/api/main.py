@@ -15,6 +15,7 @@ from src.heuristic import (
 from src.model import MistralModelProvider, ModelProviderFactory
 from src.types.heuristic_name import HeuristicName
 from src.types.model_provider_name import ModelProviderName
+from src.types.move import Move
 from src.types.piece_enum import PieceEnum
 from src.types.solver_type import HeuristicSolverType, LLMSolverType, SolverType
 from src.utils import get_solver, validate_solver_type
@@ -70,6 +71,18 @@ async def get_solvers():
     return ApiResponse(data=solvers)
 
 
+@app.get("/first-move/{solver}/{name}", response_model=ApiResponse[Move])
+async def get_first_move(
+    solver_type: SolverType = Depends(validate_solver_type),
+):
+    try:
+        solver = get_solver(solver_type)
+        return ApiResponse(data=solver.first_move())
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @app.post("/move/{solver}/{name}", response_model=ApiResponse[MoveResponse])
 async def move(
     data: MoveRequest,
@@ -85,25 +98,17 @@ async def move(
     game = Game(
         board=board,
         solver=solver,
-        auto=False,
     )
 
     try:
-        # handle case where cpu starts first
-        if data.starting_player == "cpu" and game.board.is_empty():
+        # play the player's move first
+        game.make_move(move=data.player_move, piece=PieceEnum.HUMAN)
+
+        best_move = None
+        if not game.is_over():
             best_move = game.get_solver_move(piece=PieceEnum.CPU)
             if best_move is not None:
                 game.make_move(move=best_move, piece=PieceEnum.CPU)
-
-        else:
-            # play the player's move first
-            game.make_move(move=data.player_move, piece=PieceEnum.HUMAN)
-
-            best_move = None
-            if not game.is_over():
-                best_move = game.get_solver_move(piece=PieceEnum.CPU)
-                if best_move is not None:
-                    game.make_move(move=best_move, piece=PieceEnum.CPU)
 
         return ApiResponse(
             data=MoveResponse(

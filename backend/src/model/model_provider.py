@@ -21,3 +21,7 @@ class ModelProvider(ABC):
         self, board: ConnectFourBoard, piece: PieceEnum, model_name: str
     ) -> Move | None:
         pass
+
+    @abstractmethod
+    def get_first_move(self, model_name: str) -> Move:
+        pass

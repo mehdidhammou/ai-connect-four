@@ -9,3 +9,7 @@ class Solver(ABC):
     @abstractmethod
     def solve(self, board: ConnectFourBoard, piece: PieceEnum) -> Move | None:
         pass
+
+    @abstractmethod
+    def first_move(self) -> Move:
+        pass

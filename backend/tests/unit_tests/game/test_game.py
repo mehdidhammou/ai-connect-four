@@ -12,6 +12,10 @@ class MockSolver(Solver):
         possible_moves = board.get_possible_moves()
         return possible_moves[0]  # Always return the first column as the best move
 
+    def first_move(self) -> Move:
+        possible_moves = ConnectFourBoard().get_possible_moves()
+        return possible_moves[0]
+
 
 class TestGame(TestCase):
     def setUp(self):
