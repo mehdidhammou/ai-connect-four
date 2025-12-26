@@ -1,10 +1,10 @@
 import unittest
 
-from src.types.piece_enum import PieceEnum
 from src.board.connect_four_board import ConnectFourBoard
-from src.heuristic import CountPositionsHeuristic
+from src.heuristic.count_positions_heuristic import CountPositionsHeuristic
 from src.solver import MinimaxAlphaBetaPruningSolver
 from src.types.move import Move
+from src.types.piece_enum import PieceEnum
 
 
 class TestMinimaxAlphaBetaSolverComprehensive(unittest.TestCase):

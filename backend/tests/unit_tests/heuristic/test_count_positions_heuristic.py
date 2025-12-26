@@ -1,10 +1,8 @@
 import unittest
 
-from src.types.piece_enum import PieceEnum
 from src.board import ConnectFourBoard
-from src.heuristic import (
-    CountPositionsHeuristic,
-)
+from src.heuristic.count_positions_heuristic import CountPositionsHeuristic
+from src.types.piece_enum import PieceEnum
 
 
 class TestCountPositionsHeuristic(unittest.TestCase):

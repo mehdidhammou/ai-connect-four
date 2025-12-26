@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 from typing import get_args
@@ -7,11 +8,9 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.board import ConnectFourBoard
 from src.game import Game
-from src.heuristic import (
-    CountPiecesHeuristic,
-    CountPositionsHeuristic,
-    HeuristicFactory,
-)
+from src.heuristic.count_pieces_heuristic import CountPiecesHeuristic
+from src.heuristic.count_positions_heuristic import CountPositionsHeuristic
+from src.heuristic.heuristic_factory import HeuristicFactory
 from src.model import MistralModelProvider, ModelProviderFactory
 from src.types.heuristic_name import HeuristicName
 from src.types.model_provider_name import ModelProviderName
@@ -28,6 +27,9 @@ from api.schemas.move_response import MoveResponse
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_dotenv()
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
     HeuristicFactory.register("pieces", CountPiecesHeuristic)
     HeuristicFactory.register("positions", CountPositionsHeuristic)
     ModelProviderFactory.register(

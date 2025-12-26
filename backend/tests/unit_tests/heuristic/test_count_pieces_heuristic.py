@@ -1,6 +1,6 @@
 import unittest
 from src.types.piece_enum import PieceEnum
-from src.heuristic import CountPiecesHeuristic
+from src.heuristic.count_pieces_heuristic import CountPiecesHeuristic
 from src.board import ConnectFourBoard
 
 

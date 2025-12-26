@@ -5,7 +5,7 @@ from src.board.connect_four_board import ConnectFourBoard
 from src.types.piece_enum import PieceEnum
 from src.types.move import Move
 
-from .model import Model
+from ..types.model import Model
 
 
 class ModelProvider(ABC):

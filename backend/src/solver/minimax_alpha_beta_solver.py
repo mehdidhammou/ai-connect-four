@@ -1,7 +1,7 @@
 from math import inf
 
 from src.board.connect_four_board import ConnectFourBoard
-from src.heuristic import Heuristic
+from src.heuristic.heuristic import Heuristic
 from src.types.move import Move
 from src.types.piece_enum import PieceEnum
 

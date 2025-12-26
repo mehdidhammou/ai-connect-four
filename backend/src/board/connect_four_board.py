@@ -1,3 +1,4 @@
+import logging
 from src.types.move import Move
 from src.types.piece_enum import PieceEnum
 
@@ -10,7 +11,6 @@ class ConnectFourBoard:
         self.state = [
             [PieceEnum.EMPTY for _ in range(self.cols)] for _ in range(self.rows)
         ]
-
         if initial_state:
             if len(initial_state) != self.rows or len(initial_state[0]) != self.cols:
                 raise ValueError(
@@ -22,6 +22,8 @@ class ConnectFourBoard:
     def make_move(self, move: Move, piece: PieceEnum) -> None:
         if move not in self.get_possible_moves():
             raise ValueError("Invalid move")
+
+        logging.debug(f"Making move: {move} for piece: {piece}")
 
         self.state[move.row][move.col] = piece
 
@@ -63,7 +65,12 @@ class ConnectFourBoard:
 
     def is_empty(self) -> bool:
         return all(
-            self.state[row][col] == 0
+            self.state[row][col] == PieceEnum.EMPTY
             for row in range(self.rows)
             for col in range(self.cols)
         )
+
+    def is_winning_move(self, move: Move, piece: PieceEnum) -> bool:
+        temp_board = ConnectFourBoard(initial_state=self.state)
+        temp_board.make_move(move, piece)
+        return temp_board.has_won(piece)

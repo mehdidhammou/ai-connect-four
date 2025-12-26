@@ -1,6 +1,8 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
 class Model(BaseModel):
     name: str
-    description: str
+    description: Optional[str] = None
