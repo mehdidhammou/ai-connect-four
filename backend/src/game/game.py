@@ -1,3 +1,4 @@
+import logging
 from src.board.connect_four_board import ConnectFourBoard
 from src.solver import Solver
 from src.types.move import Move
@@ -24,7 +25,9 @@ class Game:
         self.sync_state()
 
     def get_solver_move(self, piece: PieceEnum) -> Move | None:
-        return self.solver.solve(self.board, piece=piece)
+        best_move = self.solver.solve(self.board, piece=piece)
+        logging.info(f"Solver selected move: {best_move} for piece: {piece}")
+        return best_move
 
     def sync_state(self) -> None:
         if self.board.has_won(piece=PieceEnum.HUMAN):

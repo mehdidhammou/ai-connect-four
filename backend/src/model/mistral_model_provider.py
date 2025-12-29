@@ -1,4 +1,5 @@
 import json
+import logging
 
 from mistralai import Mistral
 from mistralai.models import SystemMessage, UserMessage
@@ -14,106 +15,104 @@ from .model_provider import ModelProvider
 class MistralModelProvider(ModelProvider):
     def __init__(self, api_key: str):
         super().__init__(name="mistral")
-        self.api_key = api_key
+        self.client = Mistral(api_key=api_key)
 
     def get_models(self) -> list[Model]:
-        with Mistral(
-            api_key=self.api_key,
-        ) as mistral:
-            unique_models = {}
-            res = mistral.models.list()
+        unique_models = {}
+        res = self.client.models.list()
 
-            for model_info in res.data or []:
-                model = {
-                    "name": model_info.id,
-                    "aliases": model_info.aliases,
-                }
-                key = tuple(sorted([model["name"], *model["aliases"]]))
-                del model["aliases"]
-                unique_models.setdefault(
-                    key,
-                    Model(name=model["name"]),
-                )
+        for model_info in res.data or []:
+            model = {
+                "name": model_info.id,
+                "aliases": model_info.aliases,
+            }
+            key = tuple(sorted([model["name"], *model["aliases"]]))
+            del model["aliases"]
+            unique_models.setdefault(
+                key,
+                Model(name=model["name"]),
+            )
 
         return list(unique_models.values())
 
     def get_move(
-        self, board: ConnectFourBoard, piece: PieceEnum, model_name: str
+        self,
+        board: ConnectFourBoard,
+        piece: PieceEnum,
+        model_name: str,
     ) -> Move | None:
-        with Mistral(
-            api_key=self.api_key,
-        ) as mistral:
-            system_prompt = self._get_system_prompt()
-            prompt = self._create_prompt(board, piece)
-            response = mistral.chat.complete(
-                model=model_name,
-                response_format={"type": "json_object"},
-                messages=[system_prompt, prompt],
-            )
-            move = Move(**json.loads(str(response.choices[0].message.content)))
-            return move
+        system_prompt = self._get_system_prompt(piece)
+        prompt = self._create_prompt(board, piece)
+
+        response = self.client.chat.complete(
+            model=model_name,
+            response_format={"type": "json_object"},
+            messages=[system_prompt, prompt],
+        )
+        chosen_col = json.loads(str(response.choices[0].message.content))
+        return board.get_move_from_col(chosen_col["col"])
 
     def _create_prompt(self, board: ConnectFourBoard, piece: PieceEnum) -> UserMessage:
-        s = f"CURRENT BOARD (0=empty, {piece}=YOU, {PieceEnum(3 - piece)}=OPPONENT):\n"
-        s += "Col : 0 1 2 3 4 5 6\n"
-        for i, r in enumerate(board.state):
-            s += f"Row{i}: " + " ".join(map(str, r)) + "\n"
+        moves = "- " + "\n- ".join(
+            str(m.model_dump()) for m in board.get_possible_moves()
+        )
+        return UserMessage(
+            content=f"""
+Board:
+{board}
 
-        moves = "\n".join(str(m.model_dump()) for m in board.get_possible_moves())
-
-        s += f"""
-Here are the possible moves you can make
+Possible moves:
 {moves}
-
-ANALYZE:
-1. Can YOU win this turn? If yes, play that move.
-2. Can OPPONENT win next turn? If yes, block that move.
-3. Otherwise choose strategically.
-
-Return ONLY: {{"col": integer, "row": integer}}
 """
-        return UserMessage(content=s)
+        )
 
-    def _parse_move_response(self, response) -> Move | None:
-        try:
-            content = response.choices[0].message.content
-            col_str, row_str = content.strip().split(",")
-            col = int(col_str)
-            row = int(row_str)
-            return Move(col=col, row=row)
-        except Exception:
-            return None
-
-    def _get_system_prompt(self) -> SystemMessage:
+    def _get_system_prompt(self, piece: PieceEnum) -> SystemMessage:
+        opponent_piece = PieceEnum(3 - piece)
         return SystemMessage(
-            content="""You are an expert Connect Four player.
+            content=f"""
+You are an expert Connect Four player.
 
 GAME RULES:
 - 7 columns (numbered 0-6), 6 rows
-- Pieces drop to the lowest empty row in chosen column
+- Pieces drop to the lowest empty row in the chosen column
 - Win by connecting 4 pieces horizontally, vertically, or diagonally
-- You are piece 1, opponent is piece 2
+- You are piece {piece}, opponent is piece {opponent_piece}
+- Always play a valid move (0-6).
+- You are given a list of possible moves to choose from.
 
-STRATEGY (check in this order):
+STRATEGY:
+Choose one of the possible moves according to the following priority:
 1. If YOU can win this turn, play that winning move
 2. If OPPONENT can win next turn, block them
-3. Otherwise, play strategically (center columns are strongest)
 
 OUTPUT FORMAT:
-Return ONLY valid JSON: {"col": integer, "row": integer}
-No explanations. No other text.
+Return ONLY valid JSON: {{"col": "integer"}}. No explanations, no other text.
 
 EXAMPLES:
+
 Example 1 - Take the win:
-Board: Row5: 1 1 1 0 0 0 0
-Analysis: You can win by playing column 3
-Answer: {{"col": 3}}
+Board:
+  0   1   2   3   4   5   6
+| . | . | . | . | . | . | . |
+| . | . | . | . | . | . | . |
+| 2 | . | . | 2 | . | . | . |
+| 2 | 2 | . | 1 | 2 | . | . |
+| 1 | 1 | 1 | 2 | 1 | 2 | . |
+| 1 | 1 | 2 | 1 | 1 | 1 | . |
+Analysis: You can win diagonally by playing column 6
+Answer: {{"col": 6}}
 
 Example 2 - Block opponent:
-Board: Row5: 2 2 2 0 0 0 0
-Analysis: Opponent wins if you don't block column 3
-Answer: {{"col": 3, "row": 5}}
-
+Board:
+  0   1   2   3   4   5   6
+| . | . | . | . | . | . | . |
+| . | . | . | . | . | . | . |
+| . | . | . | . | . | . | . |
+    | 1 | . | . | . | . | . | . |
+| 1 | . | . | . | . | . | . |
+| 1 | 2 | 2 | . | . | . | . |
+Analysis: Opponent wins vertically if you don't block column 0
+Answer: {{"col": 0}}
 """
         )
 

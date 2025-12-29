@@ -20,11 +20,7 @@ class ConnectFourBoard:
                 self.state = [[_ for _ in row] for row in initial_state]
 
     def make_move(self, move: Move, piece: PieceEnum) -> None:
-        if move not in self.get_possible_moves():
-            raise ValueError("Invalid move")
-
-        logging.debug(f"Making move: {move} for piece: {piece}")
-
+        logging.info(f"Making move: {move} for piece: {piece}")
         self.state[move.row][move.col] = piece
 
     def get_possible_moves(self) -> list[Move]:
@@ -74,3 +70,19 @@ class ConnectFourBoard:
         temp_board = ConnectFourBoard(initial_state=self.state)
         temp_board.make_move(move, piece)
         return temp_board.has_won(piece)
+
+    def get_move_from_col(self, col: int) -> Move | None:
+        for row in range(self.rows - 1, -1, -1):
+            if self.state[row][col] == PieceEnum.EMPTY:
+                return Move(col=col, row=row)
+        return None
+
+    def __str__(self) -> str:
+        display = "  " + "   ".join(str(i) for i in range(self.cols)) + "\n"
+        for row in self.state:
+            display += (
+                "| "
+                + " | ".join(str(cell.value) if cell.value else "." for cell in row)
+                + " |\n"
+            )
+        return display
