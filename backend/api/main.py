@@ -1,9 +1,7 @@
 import logging
-import os
 from contextlib import asynccontextmanager
 from typing import get_args
 
-from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.board import ConnectFourBoard
@@ -22,11 +20,12 @@ from src.utils import get_solver, validate_solver_type
 from api.schemas.api_response import ApiResponse
 from api.schemas.move_request import MoveRequest
 from api.schemas.move_response import MoveResponse
+from api.schemas.settings import Settings
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    load_dotenv()
+    settings = Settings()
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
@@ -35,7 +34,7 @@ async def lifespan(app: FastAPI):
     ModelProviderFactory.register(
         "mistral",
         MistralModelProvider,
-        api_key=os.environ["MISTRAL_API_KEY"],
+        api_key=settings.MISTRAL_API_KEY,
     )
     yield
 
@@ -60,11 +59,11 @@ async def ping():
 async def get_solvers():
     solvers = []
 
-    # Add heuristic solvers
+    # heuristic solvers
     for name in get_args(HeuristicName):
         solvers.append(HeuristicSolverType(type="heuristic", name=name))
 
-    # Add LLM solvers
+    # llm solvers
     for provider in get_args(ModelProviderName):
         provider_instance = ModelProviderFactory.create(provider)
         for model in provider_instance.get_models():
