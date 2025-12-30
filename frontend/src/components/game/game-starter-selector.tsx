@@ -56,11 +56,10 @@ const GameStarterSelector = () => {
           defaultValue="human"
           type="single"
           size={"lg"}
-          className="grid grid-cols-2"
         >
           {players.map((player) => (
             <ToggleGroupItem
-              className="capitalize"
+              className="w-full capitalize"
               key={player}
               value={player as string}
             >

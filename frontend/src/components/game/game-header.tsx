@@ -8,13 +8,13 @@ const GameHeader = () => {
   const reset = useGameStore((state) => state.reset);
   const { solver, name } = useParams();
   return (
-    <div className="flex items-center justify-between p-6 border rounded-xl">
-      <div className="flex items-center gap-2 p-2 rounded-full">
+    <div className="flex items-center justify-between p-6 border rounded-3xl">
+      <div className="flex items-center gap-2 rounded-full">
         <Button
           onClick={reset}
           asChild
           variant={"ghost"}
-          className="mr-2"
+          className="p-0 mr-2"
           size={"sm"}
         >
           <Link to={"/"}>

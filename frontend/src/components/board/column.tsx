@@ -57,7 +57,7 @@ const Column = ({ column, colIdx }: ColumnProps) => {
     <button
       disabled={disabled}
       onClick={handleClick}
-      className="flex flex-col gap-2 p-2 transition rounded-full enabled:hover:dark:bg-primary enabled:hover:bg-muted"
+      className="flex flex-col flex-1 gap-2 p-2 transition rounded-full enabled:hover:dark:bg-primary enabled:hover:bg-muted md:flex-none"
     >
       {column.map((val, index) => (
         <Cell

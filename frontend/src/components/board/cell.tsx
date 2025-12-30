@@ -12,7 +12,7 @@ const Cell = ({ value, highlight = false }: CellProps) => {
   return (
     <div
       className={cn(
-        "w-16 h-16 rounded-full",
+        "w-full aspect-square rounded-full min-w-8 min-h-8 md:w-16 md:h-16",
         colorClass,
         highlight && "border-4 border-green-500"
       )}
